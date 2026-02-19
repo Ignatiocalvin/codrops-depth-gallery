@@ -5,6 +5,7 @@ class Debug {
     this.pane = null
     this.state = {
       planeColor: '#ffffff',
+      backgroundColor: '#0e1a2b',
     }
   }
 
@@ -12,6 +13,7 @@ class Debug {
     if (this.pane) return
 
     this.state.planeColor = experience.planeColor
+    this.state.backgroundColor = experience.backgroundColor
     this.pane = new Pane({ title: 'Plane' })
     this.pane.element.classList.add('debug-pane')
 
@@ -21,6 +23,14 @@ class Debug {
 
     planeColorBinding.on('change', (event) => {
       experience.setPlaneColor(event.value)
+    })
+
+    const backgroundColorBinding = this.pane.addBinding(this.state, 'backgroundColor', {
+      label: 'Background',
+    })
+
+    backgroundColorBinding.on('change', (event) => {
+      experience.setBackgroundColor(event.value)
     })
   }
 

@@ -32,7 +32,7 @@ class Engine {
     })
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2))
     this.renderer.outputColorSpace = THREE.SRGBColorSpace
-    this.renderer.setClearColor('#0e1a2b', 1)
+    this.renderer.setClearColor(this.experience.backgroundColor, 1)
 
     // Responsive
     this.onResize = () => {
@@ -80,6 +80,7 @@ class Engine {
 
     const time = performance.now()
     this.experience.update(time)
+    this.renderer.setClearColor(this.experience.backgroundColor, 1)
     this.controls.update()
     this.renderer.render(this.scene, this.camera)
   }

@@ -6,6 +6,7 @@ class Experience {
     this.isInitialized = false
     this.plane = null
     this.planeColor = '#ffffff'
+    this.backgroundColor = '#0e1a2b'
     this.debug = new Debug()
   }
 
@@ -20,7 +21,10 @@ class Experience {
 
   setPlane(scene) {
     const planeGeometry = new THREE.PlaneGeometry(3, 3)
-    const planeMaterial = new THREE.MeshBasicMaterial({ color: this.planeColor })
+    const planeMaterial = new THREE.MeshBasicMaterial({
+      color: this.planeColor,
+      side: THREE.DoubleSide,
+    })
     const plane = new THREE.Mesh(planeGeometry, planeMaterial)
 
     scene.add(plane)
@@ -33,6 +37,10 @@ class Experience {
     if (this.plane && this.plane.material instanceof THREE.MeshBasicMaterial) {
       this.plane.material.color.set(color)
     }
+  }
+
+  setBackgroundColor(color) {
+    this.backgroundColor = color
   }
 
   update() {}
