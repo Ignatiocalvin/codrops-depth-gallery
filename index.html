@@ -1,22 +1,28 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" class="no-js">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Demoname | Demo 1 | Codrops</title>
-    <meta name="description" content="" />
-    <meta name="keywords" content="" />
+    <title>Depth Trail Gallery | Codrops</title>
+    <meta
+      name="description"
+      content="A scroll-driven 3D gallery where images are stacked in depth and the camera moves through them along the Z-axis. Scroll velocity generates a real-time accumulation trail and background mood shifts."
+    />
+    <meta
+      name="keywords"
+      content="three.js, webgl, codrops, scroll, 3d gallery, depth, z-axis, trail, motion"
+    />
     <meta name="author" content="Codrops" />
     <link rel="icon" type="image/svg+xml" href="https://tympanus.net/favicon/favicon.svg" />
     <link rel="shortcut icon" href="https://tympanus.net/favicon/favicon.ico" />
-    <link rel="stylesheet" type="text/css" href="css/base.css" />
     <script>
-      document.documentElement.className = 'js';
+      document.documentElement.className = 'js'
     </script>
     <!--script src="//tympanus.net/codrops/adpacks/analytics.js"></script-->
   </head>
 
   <body class="demo-1">
+    <canvas class="webgl"></canvas>
     <main>
       <header class="frame">
         <h1 class="frame__title">The Title</h1>
@@ -34,10 +40,9 @@
           <a href="index3.html">Variation 3</a>
         </nav>
       </header>
-      <div class="content">
-        <h2>The Content</h2>
-      </div>
+      <div class="content"></div>
     </main>
+    <script type="module" src="/src/main.js"></script>
     <!--script src="https://tympanus.net/codrops/adpacks/cda_sponsor.js"></script-->
   </body>
 </html>

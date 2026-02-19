@@ -7,9 +7,9 @@ _How to use this template:_
 
 ---
 
-# Title of the demo
+# Depth-Scrolling Gallery
 
-_A description of the demo goes here._
+A Three.js depth-scrolling image gallery where scroll velocity drives an accumulation-based trail effect, while each image defines its own background mood.
 
 ![Image Title](https://generative-placeholders.glitch.me/image?width=800&height=600")
 
@@ -19,15 +19,36 @@ _A description of the demo goes here._
 
 ## Installation
 
-Run this demo on a [local server](https://developer.mozilla.org/en-US/docs/Learn/Common_questions/Tools_and_setup/set_up_a_local_testing_server).
+Run this demo on a [local server](https://developer.mozilla.org/en-US/docs/Learn/Common_questions/Tools_and_setup/set_up_a_local_testing_server):
+
+```
+npm install
+npm run dev
+```
+
+For production build:
+
+```
+npm run build
+npm run preview
+```
+
+## Tech Stack
+
+- Node.js >= 18
+- [Vite](https://vite.dev/)
+- [Three.js](https://threejs.org/)￼
+- Vanilla JavaScript (ES Modules)
+- GLSL (via vite-plugin-glsl)
 
 ## Credits
 
-- Images generated with [Midjourney](https://midjourney.com)
+- Built with [Three.js](https://threejs.org/)￼
+- Images generated with [Lummi](https://www.lummi.ai/)
 
 ## Misc
 
-Follow _Author_: [Twitter](), [Instagram](), [GitHub]() ...
+Follow Houmahani Kane: [X](https://x.com/houma_hani), [Instagram](https://www.instagram.com/houma.hani/), [GitHub](https://github.com/houmahani/), [LinkedIn](https://www.linkedin.com/in/houmahanikane/), [Codepen](https://codepen.io/houmahani)
 
 Follow Codrops: [X](http://www.x.com/codrops), [Facebook](https://www.facebook.com/codrops), [Instagram](https://www.instagram.com/codropsss/), [LinkedIn](https://www.linkedin.com/company/codrops/), [GitHub](https://github.com/codrops)
 
