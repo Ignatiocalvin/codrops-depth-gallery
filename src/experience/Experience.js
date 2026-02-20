@@ -1,49 +1,28 @@
-import * as THREE from 'three'
+import { Gallery } from '@/experience/Gallery'
+import { Background } from '@/experience/Background'
 import { Debug } from '@/experience/Debug'
 
 class Experience {
   constructor() {
     this.isInitialized = false
-    this.plane = null
-    this.planeColor = '#ffffff'
-    this.backgroundColor = '#0e1a2b'
     this.debug = new Debug()
+    this.gallery = new Gallery(this.debug)
+    this.background = new Background(this.debug)
   }
 
   async init(scene) {
     if (this.isInitialized) return
 
-    this.setPlane(scene)
-    this.debug.init(this)
+    await this.gallery.init(scene)
+    this.background.init()
 
     this.isInitialized = true
   }
 
-  setPlane(scene) {
-    const planeGeometry = new THREE.PlaneGeometry(3, 3)
-    const planeMaterial = new THREE.MeshBasicMaterial({
-      color: this.planeColor,
-      side: THREE.DoubleSide,
-    })
-    const plane = new THREE.Mesh(planeGeometry, planeMaterial)
-
-    scene.add(plane)
-    this.plane = plane
+  update(time) {
+    this.gallery.update(time)
+    this.background.update(time)
   }
-
-  setPlaneColor(color) {
-    this.planeColor = color
-
-    if (this.plane && this.plane.material instanceof THREE.MeshBasicMaterial) {
-      this.plane.material.color.set(color)
-    }
-  }
-
-  setBackgroundColor(color) {
-    this.backgroundColor = color
-  }
-
-  update() {}
 }
 
 const world = new Experience()

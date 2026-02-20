@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { world } from '@/experience/Experience'
+import { Scroll } from '@/experience/Scroll'
 
 class Engine {
   constructor(canvas, experience = world) {
@@ -11,9 +12,12 @@ class Engine {
     // Initialization
     this.canvas = canvas
     this.experience = experience
+    this.debug = this.experience.debug
     this.isInitialized = false
     this.isRunning = false
+    this.isDebugBound = false
     this.animationFrameRequestId = null
+    this.preloadedTextures = new Map()
     this.scene = new THREE.Scene()
 
     // Camera
@@ -21,9 +25,14 @@ class Engine {
     this.camera.position.set(0, 0, 6)
 
     // Orbit Controls
+    this.orbitControlsEnabled = false
     this.controls = new OrbitControls(this.camera, this.canvas)
+    this.controls.enabled = this.orbitControlsEnabled
     this.controls.enableDamping = true
     this.controls.enablePan = false
+
+    // Scroll
+    this.scroll = new Scroll(this.camera, this.experience.gallery, this.debug)
 
     // Renderer
     this.renderer = new THREE.WebGLRenderer({
@@ -32,28 +41,37 @@ class Engine {
     })
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2))
     this.renderer.outputColorSpace = THREE.SRGBColorSpace
-    this.renderer.setClearColor(this.experience.backgroundColor, 1)
+    this.renderer.setClearColor(this.experience.background.color, 1)
 
-    // Responsive
     this.onResize = () => {
       this.resize()
     }
 
-    // Start loop
     this.animate = this.update.bind(this)
   }
 
   async init() {
     if (this.isInitialized) return
 
-    await this.experience.init(this.scene)
+    document.body.classList.add('loading')
 
-    this.resize()
-    window.addEventListener('resize', this.onResize)
+    try {
+      this.preloadedTextures = await this.preloadTextures()
+      this.experience.gallery.setPreloadedTextures(this.preloadedTextures)
 
-    this.isInitialized = true
+      await this.experience.init(this.scene)
+      this.scroll.init()
+      this.bindDebug()
 
-    this.start()
+      this.resize()
+      window.addEventListener('resize', this.onResize)
+      this.scroll.bindEvents()
+
+      this.isInitialized = true
+      this.start()
+    } finally {
+      document.body.classList.remove('loading')
+    }
   }
 
   start() {
@@ -71,6 +89,30 @@ class Engine {
     this.camera.aspect = width / height
     this.camera.updateProjectionMatrix()
     this.renderer.setSize(width, height, false)
+    this.experience.gallery.updatePlaneScale()
+    this.experience.gallery.layoutPlanes()
+  }
+
+  async preloadTextures() {
+    const textureSources = this.experience.gallery.getTextureSources()
+    if (!textureSources.length) return new Map()
+
+    const textureLoader = new THREE.TextureLoader()
+    const loadedTextures = new Map()
+
+    await Promise.all(
+      textureSources.map(async (textureSource) => {
+        try {
+          const texture = await textureLoader.loadAsync(textureSource)
+          texture.colorSpace = THREE.SRGBColorSpace
+          loadedTextures.set(textureSource, texture)
+        } catch (error) {
+          console.warn(`Texture failed to load: ${textureSource}`, error)
+        }
+      })
+    )
+
+    return loadedTextures
   }
 
   update() {
@@ -79,10 +121,34 @@ class Engine {
     this.animationFrameRequestId = requestAnimationFrame(this.animate)
 
     const time = performance.now()
+
     this.experience.update(time)
-    this.renderer.setClearColor(this.experience.backgroundColor, 1)
-    this.controls.update()
+
+    this.renderer.setClearColor(this.experience.background.color, 1)
+
+    this.scroll.update(this.orbitControlsEnabled)
+
+    if (this.orbitControlsEnabled) {
+      this.controls.update()
+    }
+
     this.renderer.render(this.scene, this.camera)
+  }
+
+  bindDebug() {
+    if (!this.debug || this.isDebugBound) return
+
+    this.debug.addBinding({
+      folderTitle: 'Engine',
+      targetObject: this,
+      property: 'orbitControlsEnabled',
+      label: 'Orbit Controls',
+      onChange: (value) => {
+        this.controls.enabled = value
+      },
+    })
+
+    this.isDebugBound = true
   }
 
   dispose() {
@@ -94,6 +160,12 @@ class Engine {
     }
 
     window.removeEventListener('resize', this.onResize)
+    this.scroll.dispose()
+
+    this.preloadedTextures.forEach((texture) => {
+      texture.dispose()
+    })
+    this.preloadedTextures.clear()
   }
 }
 

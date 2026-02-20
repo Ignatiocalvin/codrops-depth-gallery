@@ -3,41 +3,66 @@ import { Pane } from 'tweakpane'
 class Debug {
   constructor() {
     this.pane = null
-    this.state = {
-      planeColor: '#ffffff',
-      backgroundColor: '#0e1a2b',
-    }
+    this.folders = new Map()
   }
 
-  init(experience) {
-    if (this.pane) return
+  init() {
+    if (this.pane) return this.pane
 
-    this.state.planeColor = experience.planeColor
-    this.state.backgroundColor = experience.backgroundColor
-    this.pane = new Pane({ title: 'Plane' })
+    this.pane = new Pane({ title: 'Debug' })
     this.pane.element.classList.add('debug-pane')
+    return this.pane
+  }
 
-    const planeColorBinding = this.pane.addBinding(this.state, 'planeColor', {
-      label: 'Color',
+  getFolder(folderTitle) {
+    this.init()
+    if (this.folders.has(folderTitle)) {
+      return this.folders.get(folderTitle)
+    }
+
+    const folder = this.pane.addFolder({ title: folderTitle, expanded: true })
+    this.folders.set(folderTitle, folder)
+    return folder
+  }
+
+  addColorBinding({ folderTitle, targetObject, property, label, onChange }) {
+    return this.addBinding({
+      folderTitle,
+      targetObject,
+      property,
+      label,
+      onChange,
+    })
+  }
+
+  addBinding({
+    folderTitle,
+    targetObject,
+    property,
+    label,
+    options = {},
+    onChange,
+  }) {
+    const folder = this.getFolder(folderTitle)
+    const binding = folder.addBinding(targetObject, property, {
+      label,
+      ...options,
     })
 
-    planeColorBinding.on('change', (event) => {
-      experience.setPlaneColor(event.value)
+    binding.on('change', (event) => {
+      if (onChange) {
+        onChange(event.value)
+      }
     })
 
-    const backgroundColorBinding = this.pane.addBinding(this.state, 'backgroundColor', {
-      label: 'Background',
-    })
-
-    backgroundColorBinding.on('change', (event) => {
-      experience.setBackgroundColor(event.value)
-    })
+    return binding
   }
 
   dispose() {
     if (!this.pane) return
     this.pane.dispose()
     this.pane = null
+    this.folders.clear()
   }
 }
 
