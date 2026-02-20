@@ -23,3 +23,45 @@
     bottom: max(0.75rem, env(safe-area-inset-bottom));
   }
 }
+
+.velocity-visualizer {
+  position: fixed;
+  left: max(0.75rem, env(safe-area-inset-left));
+  bottom: max(0.75rem, env(safe-area-inset-bottom));
+  z-index: 2000;
+  width: 220px;
+  padding: 0.5rem 0.625rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(4, 10, 18, 0.8);
+  backdrop-filter: blur(6px);
+  color: #ffffff;
+  font-family: ui-monospace, monospace;
+  pointer-events: none;
+}
+
+.velocity-visualizer__label,
+.velocity-visualizer__value {
+  margin: 0;
+  font-size: 11px;
+}
+
+.velocity-visualizer__value {
+  margin-top: 0.25rem;
+}
+
+.velocity-visualizer__track {
+  position: relative;
+  margin-top: 0.5rem;
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.velocity-visualizer__fill {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 0;
+  height: 100%;
+  background: #7fffd4;
+}

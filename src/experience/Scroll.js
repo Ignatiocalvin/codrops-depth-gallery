@@ -14,14 +14,24 @@ class Scroll {
     this.scrollToWorldFactor = 0.01
     this.wheelScrollSpeed = 1
     this.touchScrollSpeed = 1.8
+    this.previousScrollCurrent = 0
+    this.rawVelocity = 0
+    this.velocity = 0
+    this.velocityDamping = 0.12
+    this.velocityMax = 1.5
+    this.velocityStopThreshold = 0.0001
     this.invertScroll = false
     this.useScrollBounds = true
+    this.showVelocityVisualizer = true
     this.firstPlaneViewOffset = 5
     this.lastPlaneViewOffset = 5
     this.minCameraZ = -Infinity
     this.maxCameraZ = Infinity
     this.cameraStartZ = this.camera.position.z
     this.touchY = 0
+    this.velocityVisualizerElement = null
+    this.velocityVisualizerFillElement = null
+    this.velocityVisualizerValueElement = null
 
     this.onWheel = (event) => {
       event.preventDefault()
@@ -48,6 +58,11 @@ class Scroll {
     this.camera.position.z = this.cameraStartZ
     this.scrollTarget = 0
     this.scrollCurrent = 0
+    this.previousScrollCurrent = this.scrollCurrent
+    this.rawVelocity = 0
+    this.velocity = 0
+    this.createVelocityVisualizer()
+    this.updateVelocityVisualizer()
     this.bindDebug()
 
     this.isInitialized = true
@@ -88,6 +103,83 @@ class Scroll {
     this.scrollTarget += deltaY * scrollDirection
   }
 
+  updateVelocity() {
+    this.rawVelocity = this.scrollCurrent - this.previousScrollCurrent
+    this.velocity = THREE.MathUtils.lerp(this.velocity, this.rawVelocity, this.velocityDamping)
+    this.velocity = THREE.MathUtils.clamp(this.velocity, -this.velocityMax, this.velocityMax)
+
+    if (Math.abs(this.velocity) < this.velocityStopThreshold) {
+      this.velocity = 0
+    }
+
+    this.previousScrollCurrent = this.scrollCurrent
+  }
+
+  createVelocityVisualizer() {
+    if (this.velocityVisualizerElement) return
+
+    const container = document.createElement('div')
+    container.className = 'velocity-visualizer'
+
+    const label = document.createElement('p')
+    label.className = 'velocity-visualizer__label'
+    label.textContent = 'Velocity'
+
+    const value = document.createElement('p')
+    value.className = 'velocity-visualizer__value'
+    value.textContent = '0.0000'
+
+    const track = document.createElement('div')
+    track.className = 'velocity-visualizer__track'
+
+    const fill = document.createElement('div')
+    fill.className = 'velocity-visualizer__fill'
+    track.append(fill)
+
+    container.append(label, value, track)
+    document.body.append(container)
+
+    this.velocityVisualizerElement = container
+    this.velocityVisualizerFillElement = fill
+    this.velocityVisualizerValueElement = value
+    this.setVelocityVisualizerVisible(this.showVelocityVisualizer)
+  }
+
+  setVelocityVisualizerVisible(isVisible) {
+    if (!this.velocityVisualizerElement) return
+    this.velocityVisualizerElement.style.display = isVisible ? 'block' : 'none'
+  }
+
+  updateVelocityVisualizer() {
+    if (
+      !this.velocityVisualizerElement ||
+      !this.velocityVisualizerFillElement ||
+      !this.velocityVisualizerValueElement
+    ) {
+      return
+    }
+
+    const velocitySign = this.velocity === 0 ? 0 : Math.sign(this.velocity)
+    const normalizedVelocity = THREE.MathUtils.clamp(
+      Math.abs(this.velocity) / this.velocityMax,
+      0,
+      1
+    )
+    const fillPercent = normalizedVelocity * 50
+
+    if (velocitySign >= 0) {
+      this.velocityVisualizerFillElement.style.left = '50%'
+      this.velocityVisualizerFillElement.style.width = `${fillPercent}%`
+    } else {
+      this.velocityVisualizerFillElement.style.left = `${50 - fillPercent}%`
+      this.velocityVisualizerFillElement.style.width = `${fillPercent}%`
+    }
+
+    this.velocityVisualizerFillElement.style.backgroundColor =
+      velocitySign >= 0 ? '#7fffd4' : '#ff8fab'
+    this.velocityVisualizerValueElement.textContent = this.velocity.toFixed(4)
+  }
+
   update(isOrbitControlsEnabled = false) {
     this.updateCameraBounds()
     this.scrollCurrent = THREE.MathUtils.lerp(
@@ -103,6 +195,9 @@ class Scroll {
       this.scrollTarget = THREE.MathUtils.clamp(this.scrollTarget, minimumScroll, maximumScroll)
       this.scrollCurrent = THREE.MathUtils.clamp(this.scrollCurrent, minimumScroll, maximumScroll)
     }
+
+    this.updateVelocity()
+    this.updateVelocityVisualizer()
 
     if (isOrbitControlsEnabled) return
 
@@ -132,6 +227,40 @@ class Scroll {
       label: 'Invert Scroll',
     })
 
+    this.debug.addBinding({
+      folderTitle: 'Scroll',
+      targetObject: this,
+      property: 'showVelocityVisualizer',
+      label: 'Debug Velocity',
+      onChange: (value) => {
+        this.setVelocityVisualizerVisible(value)
+      },
+    })
+
+    this.debug.addBinding({
+      folderTitle: 'Scroll',
+      targetObject: this,
+      property: 'velocityDamping',
+      label: 'Velocity Damping',
+      options: {
+        min: 0.01,
+        max: 1,
+        step: 0.01,
+      },
+    })
+
+    this.debug.addBinding({
+      folderTitle: 'Scroll',
+      targetObject: this,
+      property: 'velocityMax',
+      label: 'Velocity Max',
+      options: {
+        min: 0.1,
+        max: 5,
+        step: 0.1,
+      },
+    })
+
     this.isDebugBound = true
   }
 
@@ -139,6 +268,13 @@ class Scroll {
     window.removeEventListener('wheel', this.onWheel)
     window.removeEventListener('touchstart', this.onTouchStart)
     window.removeEventListener('touchmove', this.onTouchMove)
+
+    if (this.velocityVisualizerElement) {
+      this.velocityVisualizerElement.remove()
+    }
+    this.velocityVisualizerElement = null
+    this.velocityVisualizerFillElement = null
+    this.velocityVisualizerValueElement = null
   }
 }
 
