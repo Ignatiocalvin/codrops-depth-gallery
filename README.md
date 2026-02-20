@@ -44,7 +44,7 @@ npm run preview
 ## Credits
 
 - Built with [Three.js](https://threejs.org/)￼
-- Images generated with [Lummi](https://www.lummi.ai/)
+- Imagery courtesy of [NASA Earth Observatory](https://science.nasa.gov/earth/earth-observatory/image-of-the-day/)
 
 ## Misc
 
