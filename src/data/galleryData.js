@@ -24,7 +24,7 @@ const galleryPlaneData = [
     textureSrc: STILL_LIFE03,
     position: { x: -0.9, y: 0 },
     gradient: { top: '#62679b', mid: '#5f5a8e', bottom: '#9477ac' },
-    accentColor: '#f4920a',
+    accentColor: '#000000',
   },
   {
     fallbackColor: '#84c4f9',

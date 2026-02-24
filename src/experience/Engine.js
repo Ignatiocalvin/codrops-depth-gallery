@@ -127,7 +127,7 @@ class Engine {
     if (this.orbitControlsEnabled) {
       this.controls.update()
     }
-    this.experience.update(time, this.camera)
+    this.experience.update(time, this.camera, this.scroll)
 
     this.renderer.clear(true, true, true)
     this.experience.background.render(this.renderer)

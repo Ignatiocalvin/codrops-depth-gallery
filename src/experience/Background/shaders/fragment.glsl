@@ -3,9 +3,16 @@ varying vec2 vUv;
 uniform vec3 uTopColor;
 uniform vec3 uMidColor;
 uniform vec3 uBottomColor;
+uniform vec3 uAccentColor;
+uniform float uAccentStrength;
+uniform float uNoiseStrength;
 uniform vec2 uBlobCenter;
 uniform float uBlobRadius;
 uniform float uBlobStrength;
+
+float random(vec2 st) {
+  return fract(sin(dot(st, vec2(12.9898, 78.233))) * 43758.5453123);
+}
 
 void main() {
   vec2 blobDelta = vUv - uBlobCenter;
@@ -37,6 +44,15 @@ void main() {
   float luminanceCompensation = mix(1.2, 0.75, luminance);
   float blobLift = blobMask * uBlobStrength * luminanceCompensation;
   color += vec3(blobLift);
+
+  // Accent should lift the palette, not darken it.
+  float accentMask = pow(blobMask, 1.4) * uAccentStrength;
+  vec3 screenAccent = 1.0 - (1.0 - color) * (1.0 - uAccentColor);
+  color = mix(color, screenAccent, accentMask);
+
+  float grain = random(vUv * vec2(1387.13, 947.91)) - 0.5;
+  color += vec3(grain * uNoiseStrength);
+  color = clamp(color, 0.0, 1.0);
 
   gl_FragColor = vec4(color, 1.0);
 }

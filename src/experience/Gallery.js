@@ -47,6 +47,7 @@ class Gallery {
         bottom: fallbackColor,
       }
       const gradient = plane.gradient || fallbackGradient
+      const accentColor = plane.accentColor || gradient.mid || fallbackColor
       const planeMaterial = new THREE.MeshBasicMaterial({
         color: fallbackColor,
         map: texture,
@@ -56,6 +57,7 @@ class Gallery {
       planeMesh.userData.basePosition = plane.position
       planeMesh.userData.baseColor = fallbackColor
       planeMesh.userData.gradient = gradient
+      planeMesh.userData.accentColor = accentColor
       planeMesh.userData.texture = texture
       planeMesh.userData.aspectRatio = aspectRatio
       scene.add(planeMesh)
@@ -96,6 +98,14 @@ class Gallery {
     }
   }
 
+  getDepthProgress(cameraZ) {
+    const { nearestZ, deepestZ } = this.getDepthRange()
+    const depthSpan = nearestZ - deepestZ
+    if (depthSpan <= 0) return 0
+
+    return THREE.MathUtils.clamp((nearestZ - cameraZ) / depthSpan, 0, 1)
+  }
+
   getActivePlaneIndex(cameraZ) {
     if (!this.planes.length) return -1
 
@@ -123,6 +133,7 @@ class Gallery {
       top: gradient.top,
       mid: gradient.mid,
       bottom: gradient.bottom,
+      accentColor: this.planes[index].userData.accentColor,
     }
   }
 
