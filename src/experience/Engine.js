@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
-import { world } from '@/experience/Experience'
-import { Scroll } from '@/experience/Scroll'
+import { world } from '@/Experience/'
+import { Scroll } from '@/Experience/Scroll'
 
 class Engine {
   constructor(canvas, experience = world) {
@@ -41,7 +41,7 @@ class Engine {
     })
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2))
     this.renderer.outputColorSpace = THREE.SRGBColorSpace
-    this.renderer.setClearColor(this.experience.background.color, 1)
+    this.renderer.autoClear = false
 
     this.onResize = () => {
       this.resize()
@@ -122,16 +122,16 @@ class Engine {
 
     const time = performance.now()
 
-    this.experience.update(time)
-
-    this.renderer.setClearColor(this.experience.background.color, 1)
-
     this.scroll.update(this.orbitControlsEnabled)
 
     if (this.orbitControlsEnabled) {
       this.controls.update()
     }
+    this.experience.update(time, this.camera)
 
+    this.renderer.clear(true, true, true)
+    this.experience.background.render(this.renderer)
+    this.renderer.clearDepth()
     this.renderer.render(this.scene, this.camera)
   }
 
@@ -166,6 +166,7 @@ class Engine {
       texture.dispose()
     })
     this.preloadedTextures.clear()
+    this.experience.background.dispose()
   }
 }
 

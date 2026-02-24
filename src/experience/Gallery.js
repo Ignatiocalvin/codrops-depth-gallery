@@ -15,6 +15,7 @@ class Gallery {
     this.mobileXSpreadFactor = 0.25
     this.mobileBreakpoint = 768
     this.planeConfig = galleryPlaneData
+    this.moodSampleOffset = 1
   }
 
   async init(scene) {
@@ -32,25 +33,33 @@ class Gallery {
   setPlanes(scene) {
     const planeGeometry = new THREE.PlaneGeometry(3, 3)
 
-    this.planeConfig.forEach((planeDefinition) => {
-      const texture = this.texturesBySource.get(planeDefinition.textureSrc) || null
+    this.planeConfig.forEach((plane) => {
+      const texture = this.texturesBySource.get(plane.textureSrc) || null
       const textureImage = texture?.image
       const aspectRatio =
         textureImage && textureImage.width > 0 && textureImage.height > 0
           ? textureImage.width / textureImage.height
           : 1
+      const fallbackColor = plane.fallbackColor || '#ffffff'
+      const fallbackGradient = {
+        top: fallbackColor,
+        mid: fallbackColor,
+        bottom: fallbackColor,
+      }
+      const gradient = plane.gradient || fallbackGradient
       const planeMaterial = new THREE.MeshBasicMaterial({
-        color: planeDefinition.color,
+        color: fallbackColor,
         map: texture,
-        side: THREE.DoubleSide
+        side: THREE.DoubleSide,
       })
-      const plane = new THREE.Mesh(planeGeometry, planeMaterial)
-      plane.userData.basePosition = planeDefinition.position
-      plane.userData.baseColor = planeDefinition.color
-      plane.userData.texture = texture
-      plane.userData.aspectRatio = aspectRatio
-      scene.add(plane)
-      this.planes.push(plane)
+      const planeMesh = new THREE.Mesh(planeGeometry, planeMaterial)
+      planeMesh.userData.basePosition = plane.position
+      planeMesh.userData.baseColor = fallbackColor
+      planeMesh.userData.gradient = gradient
+      planeMesh.userData.texture = texture
+      planeMesh.userData.aspectRatio = aspectRatio
+      scene.add(planeMesh)
+      this.planes.push(planeMesh)
     })
   }
 
@@ -85,6 +94,80 @@ class Gallery {
       nearestZ: Math.max(...zPositions),
       deepestZ: Math.min(...zPositions),
     }
+  }
+
+  getActivePlaneIndex(cameraZ) {
+    if (!this.planes.length) return -1
+
+    let closestPlaneIndex = 0
+    let smallestDistance = Infinity
+
+    this.planes.forEach((plane, index) => {
+      const distanceToPlane = Math.abs(cameraZ - plane.position.z)
+      if (distanceToPlane < smallestDistance) {
+        smallestDistance = distanceToPlane
+        closestPlaneIndex = index
+      }
+    })
+
+    return closestPlaneIndex
+  }
+
+  getMoodColorsByIndex(index) {
+    if (index < 0 || index >= this.planes.length) return null
+
+    const gradient = this.planes[index].userData.gradient
+    if (!gradient) return null
+
+    return {
+      top: gradient.top,
+      mid: gradient.mid,
+      bottom: gradient.bottom,
+    }
+  }
+
+  getMoodBlendData(cameraZ) {
+    if (!this.planes.length) return null
+
+    const safeCameraZ = Number.isFinite(cameraZ) ? cameraZ : this.planes[0].position.z
+    const moodSampleZ = safeCameraZ - this.planeGap * this.moodSampleOffset
+    const lastPlaneIndex = this.planes.length - 1
+
+    if (lastPlaneIndex === 0 || this.planeGap <= 0) {
+      const singleMood = this.getMoodColorsByIndex(0)
+      if (!singleMood) return null
+
+      return {
+        currentMood: singleMood,
+        nextMood: singleMood,
+        blend: 0,
+      }
+    }
+
+    const firstPlaneZ = this.planes[0].position.z
+    const normalizedDepth = THREE.MathUtils.clamp(
+      (firstPlaneZ - moodSampleZ) / this.planeGap,
+      0,
+      lastPlaneIndex
+    )
+    const currentPlaneIndex = Math.floor(normalizedDepth)
+    const nextPlaneIndex = Math.min(currentPlaneIndex + 1, lastPlaneIndex)
+    const blend = normalizedDepth - currentPlaneIndex
+
+    const currentMood = this.getMoodColorsByIndex(currentPlaneIndex)
+    const nextMood = this.getMoodColorsByIndex(nextPlaneIndex) || currentMood
+    if (!currentMood || !nextMood) return null
+
+    return {
+      currentMood,
+      nextMood,
+      blend,
+    }
+  }
+
+  getActiveMoodColors(cameraZ) {
+    const moodBlendData = this.getMoodBlendData(cameraZ)
+    return moodBlendData?.currentMood || null
   }
 
   getTextureSources() {
@@ -136,6 +219,18 @@ class Gallery {
       label: 'Use Textures',
       onChange: () => {
         this.updatePlaneMaterialMode()
+      },
+    })
+
+    this.debug.addBinding({
+      folderTitle: 'Gallery',
+      targetObject: this,
+      property: 'moodSampleOffset',
+      label: 'Mood Offset',
+      options: {
+        min: 0,
+        max: 1.5,
+        step: 0.01,
       },
     })
 

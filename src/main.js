@@ -1,7 +1,7 @@
 import '@/css/base.css'
 import '@/css/canvas.css'
 
-import { Engine } from '@/experience/Engine'
+import { Engine } from '@/Experience/Engine'
 
 const canvas = document.querySelector('.webgl')
 

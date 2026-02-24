@@ -1,6 +1,6 @@
-import { Gallery } from '@/experience/Gallery'
-import { Background } from '@/experience/Background'
-import { Debug } from '@/experience/Debug'
+import { Gallery } from '@/Experience/Gallery'
+import { Background } from '@/Experience/Background'
+import { Debug } from '@/Experience/Debug'
 
 class Experience {
   constructor() {
@@ -19,8 +19,14 @@ class Experience {
     this.isInitialized = true
   }
 
-  update(time) {
+  update(time, camera = null) {
     this.gallery.update(time)
+    if (camera) {
+      const moodBlendData = this.gallery.getMoodBlendData(camera.position.z)
+      if (moodBlendData) {
+        this.background.setMoodBlend(moodBlendData)
+      }
+    }
     this.background.update(time)
   }
 }
