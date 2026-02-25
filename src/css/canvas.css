@@ -65,3 +65,69 @@
   height: 100%;
   background: #7fffd4;
 }
+
+.label-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.plane-label-text {
+  width: min(24vw, 240px);
+  pointer-events: none;
+  opacity: 1;
+  color: rgba(244, 244, 244, 0.9);
+  font-family: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+}
+
+.plane-label-text--right {
+  text-align: left;
+}
+
+.plane-label-text--left {
+  text-align: right;
+}
+
+.plane-label-text__serial,
+.plane-label-text__title,
+.plane-label-text__subtitle,
+.plane-label-text__meta {
+  margin: 0;
+}
+
+.plane-label-text__serial {
+  font-size: 10px;
+  opacity: 0.64;
+}
+
+.plane-label-text__title {
+  margin-top: 0.24rem;
+  font-size: clamp(12px, 0.95vw, 16px);
+}
+
+.plane-label-text__subtitle {
+  margin-top: 0.2rem;
+  font-size: clamp(10px, 0.76vw, 12px);
+  opacity: 0.84;
+}
+
+.plane-label-text__meta {
+  margin-top: 0.28rem;
+  font-size: 10px;
+  opacity: 0.62;
+}
+
+@media (max-width: 53em) {
+  .plane-label-text {
+    width: min(58vw, 240px);
+  }
+
+  .plane-label-text__title {
+    font-size: 11px;
+  }
+}

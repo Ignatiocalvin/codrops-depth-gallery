@@ -59,7 +59,7 @@ class Engine {
       this.preloadedTextures = await this.preloadTextures()
       this.experience.gallery.setPreloadedTextures(this.preloadedTextures)
 
-      await this.experience.init(this.scene)
+      await this.experience.init(this.scene, this.camera)
       this.scroll.init()
       this.bindDebug()
 
@@ -91,6 +91,7 @@ class Engine {
     this.renderer.setSize(width, height, false)
     this.experience.gallery.updatePlaneScale()
     this.experience.gallery.layoutPlanes()
+    this.experience.label.resize(width, height)
   }
 
   async preloadTextures() {
@@ -133,6 +134,7 @@ class Engine {
     this.experience.background.render(this.renderer)
     this.renderer.clearDepth()
     this.renderer.render(this.scene, this.camera)
+    this.experience.label.render()
   }
 
   bindDebug() {
@@ -166,6 +168,7 @@ class Engine {
       texture.dispose()
     })
     this.preloadedTextures.clear()
+    this.experience.label.dispose()
     this.experience.background.dispose()
   }
 }

@@ -16,6 +16,8 @@ class Gallery {
     this.mobileBreakpoint = 768
     this.planeConfig = galleryPlaneData
     this.moodSampleOffset = 1
+    this.planeFadeSampleOffset = 1
+    this.planeFadeSmoothing = 0.14
   }
 
   async init(scene) {
@@ -33,7 +35,7 @@ class Gallery {
   setPlanes(scene) {
     const planeGeometry = new THREE.PlaneGeometry(3, 3)
 
-    this.planeConfig.forEach((plane) => {
+    this.planeConfig.forEach((plane, index) => {
       const texture = this.texturesBySource.get(plane.textureSrc) || null
       const textureImage = texture?.image
       const aspectRatio =
@@ -48,21 +50,45 @@ class Gallery {
       }
       const gradient = plane.gradient || fallbackGradient
       const accentColor = plane.accentColor || gradient.mid || fallbackColor
+      const labelData = this.getPlaneLabelData(plane, this.planes.length)
       const planeMaterial = new THREE.MeshBasicMaterial({
         color: fallbackColor,
         map: texture,
         side: THREE.DoubleSide,
+        transparent: true,
+        depthWrite: false,
+        opacity: index === 0 ? 1 : 0,
       })
       const planeMesh = new THREE.Mesh(planeGeometry, planeMaterial)
       planeMesh.userData.basePosition = plane.position
       planeMesh.userData.baseColor = fallbackColor
       planeMesh.userData.gradient = gradient
       planeMesh.userData.accentColor = accentColor
+      planeMesh.userData.label = labelData
       planeMesh.userData.texture = texture
       planeMesh.userData.aspectRatio = aspectRatio
       scene.add(planeMesh)
       this.planes.push(planeMesh)
     })
+  }
+
+  getPlaneLabelData(planeDefinition, index) {
+    const fallback = {
+      serial: String(index + 1).padStart(2, '0'),
+      title: 'editorial frame',
+      subtitle: 'visual story',
+      meta: 'art direction',
+      color: '',
+    }
+    const label = planeDefinition.label || fallback
+
+    return {
+      serial: label.serial || fallback.serial,
+      title: label.title || fallback.title,
+      subtitle: label.subtitle || fallback.subtitle,
+      meta: label.meta || fallback.meta,
+      color: label.color || fallback.color,
+    }
   }
 
   updatePlaneScale() {
@@ -176,6 +202,29 @@ class Gallery {
     }
   }
 
+  getPlaneBlendData(cameraZ) {
+    if (!this.planes.length) return null
+
+    const planeGap = Math.max(this.planeGap, 0.0001)
+    const firstPlaneZ = this.planes[0].position.z
+    const lastPlaneIndex = this.planes.length - 1
+    const sampledCameraZ = cameraZ - planeGap * this.planeFadeSampleOffset
+    const normalizedDepth = THREE.MathUtils.clamp(
+      (firstPlaneZ - sampledCameraZ) / planeGap,
+      0,
+      lastPlaneIndex
+    )
+    const currentPlaneIndex = Math.floor(normalizedDepth)
+    const nextPlaneIndex = Math.min(currentPlaneIndex + 1, lastPlaneIndex)
+    const blend = normalizedDepth - currentPlaneIndex
+
+    return {
+      currentPlaneIndex,
+      nextPlaneIndex,
+      blend,
+    }
+  }
+
   getActiveMoodColors(cameraZ) {
     const moodBlendData = this.getMoodBlendData(cameraZ)
     return moodBlendData?.currentMood || null
@@ -248,7 +297,36 @@ class Gallery {
     this.isDebugBound = true
   }
 
-  update() {}
+  updatePlaneVisibility(cameraZ) {
+    const blendData = this.getPlaneBlendData(cameraZ)
+    if (!blendData) return
+
+    const { currentPlaneIndex, nextPlaneIndex, blend } = blendData
+
+    this.planes.forEach((plane, index) => {
+      let targetOpacity = 0
+
+      if (index === currentPlaneIndex) {
+        targetOpacity = 1 - blend
+      }
+      if (index === nextPlaneIndex) {
+        targetOpacity = Math.max(targetOpacity, blend)
+      }
+
+      const currentOpacity = Number.isFinite(plane.material.opacity) ? plane.material.opacity : 0
+      plane.material.opacity = THREE.MathUtils.lerp(
+        currentOpacity,
+        targetOpacity,
+        this.planeFadeSmoothing
+      )
+      plane.material.needsUpdate = true
+    })
+  }
+
+  update(camera = null) {
+    if (!camera) return
+    this.updatePlaneVisibility(camera.position.z)
+  }
 }
 
 export { Gallery }
