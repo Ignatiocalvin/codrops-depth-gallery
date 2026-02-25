@@ -23,6 +23,7 @@ class Scroll {
     this.invertScroll = false
     this.useScrollBounds = true
     this.showVelocityVisualizer = true
+    this.debugUiVisible = false
     this.firstPlaneViewOffset = 5
     this.lastPlaneViewOffset = 5
     this.minCameraZ = -Infinity
@@ -147,7 +148,13 @@ class Scroll {
 
   setVelocityVisualizerVisible(isVisible) {
     if (!this.velocityVisualizerElement) return
-    this.velocityVisualizerElement.style.display = isVisible ? 'block' : 'none'
+    const shouldShow = Boolean(isVisible) && this.debugUiVisible
+    this.velocityVisualizerElement.style.display = shouldShow ? 'block' : 'none'
+  }
+
+  setDebugUiVisible(isVisible) {
+    this.debugUiVisible = Boolean(isVisible)
+    this.setVelocityVisualizerVisible(this.showVelocityVisualizer)
   }
 
   updateVelocityVisualizer() {

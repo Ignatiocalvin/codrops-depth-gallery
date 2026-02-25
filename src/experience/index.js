@@ -7,6 +7,8 @@ import { Label } from '@/Experience/Label'
 class Experience {
   constructor() {
     this.isInitialized = false
+    this.frameDarkPlaneCount = 2
+    this.isFrameTextDark = null
     this.debug = new Debug()
     this.gallery = new Gallery(this.debug)
     this.label = new Label(this.gallery)
@@ -19,8 +21,23 @@ class Experience {
     await this.gallery.init(scene)
     this.label.init(scene, camera)
     this.background.init()
+    const initialPlaneBlendData = this.gallery.getPlaneBlendData(camera.position.z)
+    this.updateFrameTextTone(initialPlaneBlendData)
 
     this.isInitialized = true
+  }
+
+  updateFrameTextTone(planeBlendData) {
+    if (!planeBlendData) return
+
+    const nearestPlaneIndex =
+      planeBlendData.blend >= 0.5 ? planeBlendData.nextPlaneIndex : planeBlendData.currentPlaneIndex
+    const shouldUseDarkText = nearestPlaneIndex < this.frameDarkPlaneCount
+
+    if (this.isFrameTextDark === shouldUseDarkText) return
+
+    this.isFrameTextDark = shouldUseDarkText
+    document.body.classList.toggle('frame-text-dark', shouldUseDarkText)
   }
 
   update(time, camera = null, scroll = null) {
@@ -28,6 +45,7 @@ class Experience {
     this.label.update(camera)
     if (camera) {
       const planeBlendData = this.gallery.getPlaneBlendData(camera.position.z)
+      this.updateFrameTextTone(planeBlendData)
       const moodBlendData = this.gallery.getMoodBlendData(camera.position.z)
       if (moodBlendData) {
         this.background.setMoodBlend(moodBlendData)

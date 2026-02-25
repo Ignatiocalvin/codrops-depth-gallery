@@ -7,11 +7,11 @@ _How to use this template:_
 
 ---
 
-# Depth-Scrolling Gallery
+# Mood & Depth Gallery
 
-A Three.js depth-scrolling image gallery where scroll velocity drives an accumulation-based trail effect, while each image defines its own background mood.
+A Three.js depth-scrolling image gallery where scroll velocity drives atmospheric mood and subtle motion, while each image defines its own background palette.
 
-![Image Title](https://generative-placeholders.glitch.me/image?width=800&height=600")
+![Depth Gallery screenshot](/public/screenshot.png)
 
 [Article on Codrops](https://tympanus.net/codrops/?p=)
 
@@ -44,7 +44,7 @@ npm run preview
 ## Credits
 
 - Built with [Three.js](https://threejs.org/)￼
-- Imagery courtesy of [NASA Earth Observatory](https://science.nasa.gov/earth/earth-observatory/image-of-the-day/)
+- Imagery generated with [Lummi](https://www.lummi.ai/)
 
 ## Misc
 

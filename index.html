@@ -3,14 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Depth Trail Gallery | Codrops</title>
+    <title>Depth Gallery | Codrops</title>
     <meta
       name="description"
-      content="A scroll-driven 3D gallery where images are stacked in depth and the camera moves through them along the Z-axis. Scroll velocity generates a real-time accumulation trail and background mood shifts."
+      content="A scroll-driven 3D gallery where images are stacked in depth and the camera moves through them along the Z-axis. Scroll velocity shapes background mood and subtle motion shifts."
     />
     <meta
       name="keywords"
-      content="three.js, webgl, codrops, scroll, 3d gallery, depth, z-axis, trail, motion"
+      content="three.js, webgl, codrops, scroll, 3d gallery, depth, z-axis, mood, motion"
     />
     <meta name="author" content="Codrops" />
     <link rel="icon" type="image/svg+xml" href="https://tympanus.net/favicon/favicon.svg" />
@@ -24,7 +24,9 @@
   <body class="demo-1">
     <main>
       <header class="frame">
-        <h1 class="frame__title">Depth Trail Gallery</h1>
+        <h1 class="frame__title">
+          Depth Gallery by <a href="https://houmahani.com" target="_blank">Houmahani Kane</a>
+        </h1>
         <a class="frame__back" href="https://tympanus.net/codrops/?p=">Article</a>
         <a class="frame__archive" href="https://tympanus.net/codrops/hub/">All demos</a>
         <a class="frame__github" href="https://github.com/codrops/">GitHub</a>
@@ -32,11 +34,13 @@
           <a href="https://tympanus.net/codrops/demos/?tag=scroll">#scroll</a>
           <a href="https://tympanus.net/codrops/demos/?tag=three-js">#three.js</a>
           <a href="https://tympanus.net/codrops/demos/?tag=webgl">#webgl</a>
+          <a href="https://tympanus.net/codrops/demos/?tag=glsl">#glsl</a>
         </nav>
         <nav class="frame__demos">
-          <span>Variation 1</span>
+          <!-- <span>Variation 1</span>
           <a href="index2.html">Variation 2</a>
-          <a href="index3.html">Variation 3</a>
+          <a href="index3.html">Variation 3</a> -->
+          <p class="frame__debug-hint">Press D to see the debug tools</p>
         </nav>
       </header>
       <div class="content">

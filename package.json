@@ -1,7 +1,7 @@
 {
-  "name": "codrops-depth-trail-gallery",
+  "name": "codrops-depth-gallery",
   "version": "1.0.0",
-  "description": "A Three.js depth-scrolling gallery with velocity-driven trail feedback, created for a Codrops tutorial.",
+  "description": "A Three.js depth-scrolling gallery with velocity-driven feedback, created for a Codrops tutorial.",
   "author": {
     "name": "Houmahani Kane",
     "email": "houm.kane@gmail.com",
@@ -11,7 +11,7 @@
   "private": true,
   "repository": {
     "type": "git",
-    "url": "https://github.com/houmahani/codrops-depth-trail"
+    "url": "https://github.com/houmahani/codrops-depth-gallery"
   },
   "scripts": {
     "dev": "vite",

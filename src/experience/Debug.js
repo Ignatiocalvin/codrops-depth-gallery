@@ -4,6 +4,7 @@ class Debug {
   constructor() {
     this.pane = null
     this.folders = new Map()
+    this.isVisible = false
   }
 
   init() {
@@ -11,7 +12,14 @@ class Debug {
 
     this.pane = new Pane({ title: 'Debug' })
     this.pane.element.classList.add('debug-pane')
+    this.setVisible(this.isVisible)
     return this.pane
+  }
+
+  setVisible(isVisible) {
+    this.isVisible = isVisible
+    if (!this.pane) return
+    this.pane.element.style.display = isVisible ? 'block' : 'none'
   }
 
   getFolder(folderTitle) {

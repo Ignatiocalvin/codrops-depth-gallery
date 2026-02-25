@@ -1,5 +1,6 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
+import Stats from 'three/examples/jsm/libs/stats.module.js'
 import { world } from '@/Experience/'
 import { Scroll } from '@/Experience/Scroll'
 
@@ -18,6 +19,9 @@ class Engine {
     this.isDebugBound = false
     this.animationFrameRequestId = null
     this.preloadedTextures = new Map()
+    this.stats = null
+    this.showFps = true
+    this.isDebugUiVisible = false
     this.scene = new THREE.Scene()
 
     // Camera
@@ -46,6 +50,11 @@ class Engine {
     this.onResize = () => {
       this.resize()
     }
+    this.onKeyDown = (event) => {
+      if (event.repeat) return
+      if (event.key.toLowerCase() !== 'd') return
+      this.setDebugUiVisible(!this.isDebugUiVisible)
+    }
 
     this.animate = this.update.bind(this)
   }
@@ -61,10 +70,13 @@ class Engine {
 
       await this.experience.init(this.scene, this.camera)
       this.scroll.init()
+      this.initStats()
       this.bindDebug()
+      this.setDebugUiVisible(false)
 
       this.resize()
       window.addEventListener('resize', this.onResize)
+      window.addEventListener('keydown', this.onKeyDown)
       this.scroll.bindEvents()
 
       this.isInitialized = true
@@ -120,6 +132,7 @@ class Engine {
     if (!this.isRunning) return
 
     this.animationFrameRequestId = requestAnimationFrame(this.animate)
+    this.stats?.begin()
 
     const time = performance.now()
 
@@ -135,6 +148,30 @@ class Engine {
     this.renderer.clearDepth()
     this.renderer.render(this.scene, this.camera)
     this.experience.label.render()
+    this.stats?.end()
+  }
+
+  initStats() {
+    if (this.stats) return
+
+    this.stats = new Stats()
+    this.stats.showPanel(0)
+    this.stats.dom.classList.add('fps-stats')
+    document.body.append(this.stats.dom)
+    this.setFpsVisible(this.showFps)
+  }
+
+  setFpsVisible(isVisible) {
+    if (!this.stats) return
+    const shouldShow = Boolean(isVisible) && this.isDebugUiVisible
+    this.stats.dom.style.display = shouldShow ? 'block' : 'none'
+  }
+
+  setDebugUiVisible(isVisible) {
+    this.isDebugUiVisible = Boolean(isVisible)
+    this.debug?.setVisible(this.isDebugUiVisible)
+    this.scroll?.setDebugUiVisible(this.isDebugUiVisible)
+    this.setFpsVisible(this.showFps)
   }
 
   bindDebug() {
@@ -150,6 +187,16 @@ class Engine {
       },
     })
 
+    this.debug.addBinding({
+      folderTitle: 'Engine',
+      targetObject: this,
+      property: 'showFps',
+      label: 'Show FPS',
+      onChange: (value) => {
+        this.setFpsVisible(value)
+      },
+    })
+
     this.isDebugBound = true
   }
 
@@ -162,12 +209,15 @@ class Engine {
     }
 
     window.removeEventListener('resize', this.onResize)
+    window.removeEventListener('keydown', this.onKeyDown)
     this.scroll.dispose()
 
     this.preloadedTextures.forEach((texture) => {
       texture.dispose()
     })
     this.preloadedTextures.clear()
+    this.stats?.dom.remove()
+    this.stats = null
     this.experience.gallery.dispose()
     this.experience.label.dispose()
     this.experience.background.dispose()
