@@ -168,6 +168,7 @@ class Engine {
       texture.dispose()
     })
     this.preloadedTextures.clear()
+    this.experience.gallery.dispose()
     this.experience.label.dispose()
     this.experience.background.dispose()
   }

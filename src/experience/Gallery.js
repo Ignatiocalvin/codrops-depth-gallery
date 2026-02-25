@@ -18,6 +18,35 @@ class Gallery {
     this.moodSampleOffset = 1
     this.planeFadeSampleOffset = 1
     this.planeFadeSmoothing = 0.14
+
+    this.parallaxEnabled = true
+    this.parallaxAmountX = 0.16
+    this.parallaxAmountY = 0.08
+    this.parallaxSmoothing = 0.08
+    this.pointerTarget = new THREE.Vector2(0, 0)
+    this.pointerCurrent = new THREE.Vector2(0, 0)
+    this.gestureParallaxEnabled = true
+    this.gestureParallaxAmountY = 0.04
+    this.gestureParallaxSmoothing = 0.12
+    this.gestureParallaxCurrent = 0
+    this.gestureParallaxTarget = 0
+
+    this.breathEnabled = true
+    this.breathTiltAmount = 0.045
+    this.breathScaleAmount = 0.03
+    this.breathSmoothing = 0.14
+    this.breathGain = 1.1
+    this.breathIntensity = 0
+    this.targetBreathIntensity = 0
+
+    this.onPointerMove = (event) => {
+      const x = (event.clientX / window.innerWidth) * 2 - 1
+      const y = (event.clientY / window.innerHeight) * 2 - 1
+      this.pointerTarget.set(x, -y)
+    }
+    this.onPointerLeave = () => {
+      this.pointerTarget.set(0, 0)
+    }
   }
 
   async init(scene) {
@@ -27,6 +56,7 @@ class Gallery {
     this.updatePlaneMaterialMode()
     this.updatePlaneScale()
     this.layoutPlanes()
+    this.bindPointerEvents()
     this.bindDebug()
 
     this.isInitialized = true
@@ -102,14 +132,19 @@ class Gallery {
   }
 
   layoutPlanes() {
-    const isMobileViewport = window.innerWidth <= this.mobileBreakpoint
-    const xSpreadFactor = isMobileViewport ? this.mobileXSpreadFactor : 1
+    const xSpreadFactor = this.getXSpreadFactor()
 
     this.planes.forEach((plane, index) => {
       const basePosition = plane.userData.basePosition || { x: 0, y: 0 }
       const xPosition = basePosition.x * xSpreadFactor
       plane.position.set(xPosition, basePosition.y, -index * this.planeGap)
+      plane.userData.layoutPosition = { x: xPosition, y: basePosition.y, z: -index * this.planeGap }
     })
+  }
+
+  getXSpreadFactor() {
+    const isMobileViewport = window.innerWidth <= this.mobileBreakpoint
+    return isMobileViewport ? this.mobileXSpreadFactor : 1
   }
 
   getDepthRange() {
@@ -294,6 +329,87 @@ class Gallery {
       },
     })
 
+    this.debug.addBinding({
+      folderTitle: 'Gallery',
+      targetObject: this,
+      property: 'parallaxEnabled',
+      label: 'Plane Parallax',
+    })
+
+    this.debug.addBinding({
+      folderTitle: 'Gallery',
+      targetObject: this,
+      property: 'parallaxAmountX',
+      label: 'Parallax X',
+      options: {
+        min: 0,
+        max: 0.5,
+        step: 0.01,
+      },
+    })
+
+    this.debug.addBinding({
+      folderTitle: 'Gallery',
+      targetObject: this,
+      property: 'parallaxAmountY',
+      label: 'Parallax Y',
+      options: {
+        min: 0,
+        max: 0.3,
+        step: 0.01,
+      },
+    })
+
+    this.debug.addBinding({
+      folderTitle: 'Gallery',
+      targetObject: this,
+      property: 'gestureParallaxEnabled',
+      label: 'Gesture Parallax',
+    })
+
+    this.debug.addBinding({
+      folderTitle: 'Gallery',
+      targetObject: this,
+      property: 'gestureParallaxAmountY',
+      label: 'Gesture Y',
+      options: {
+        min: 0,
+        max: 0.4,
+        step: 0.01,
+      },
+    })
+
+    this.debug.addBinding({
+      folderTitle: 'Gallery',
+      targetObject: this,
+      property: 'breathEnabled',
+      label: 'Plane Breath',
+    })
+
+    this.debug.addBinding({
+      folderTitle: 'Gallery',
+      targetObject: this,
+      property: 'breathTiltAmount',
+      label: 'Breath Tilt',
+      options: {
+        min: 0,
+        max: 0.2,
+        step: 0.005,
+      },
+    })
+
+    this.debug.addBinding({
+      folderTitle: 'Gallery',
+      targetObject: this,
+      property: 'breathScaleAmount',
+      label: 'Breath Scale',
+      options: {
+        min: 0,
+        max: 0.1,
+        step: 0.001,
+      },
+    })
+
     this.isDebugBound = true
   }
 
@@ -323,9 +439,87 @@ class Gallery {
     })
   }
 
-  update(camera = null) {
+  bindPointerEvents() {
+    window.addEventListener('pointermove', this.onPointerMove, { passive: true })
+    window.addEventListener('pointerleave', this.onPointerLeave, { passive: true })
+  }
+
+  updatePlaneMotion(scroll = null) {
+    this.pointerCurrent.lerp(this.pointerTarget, this.parallaxSmoothing)
+
+    const velocityMax = Math.max(scroll?.velocityMax || 1, 0.0001)
+    const signedVelocityNormalized = THREE.MathUtils.clamp(
+      (scroll?.velocity || 0) / velocityMax,
+      -1,
+      1
+    )
+    const velocityNormalized = THREE.MathUtils.clamp(
+      Math.abs(scroll?.velocity || 0) / velocityMax,
+      0,
+      1
+    )
+    this.gestureParallaxTarget = this.gestureParallaxEnabled
+      ? -signedVelocityNormalized * this.gestureParallaxAmountY
+      : 0
+    this.gestureParallaxCurrent = THREE.MathUtils.lerp(
+      this.gestureParallaxCurrent,
+      this.gestureParallaxTarget,
+      this.gestureParallaxSmoothing
+    )
+    this.targetBreathIntensity = this.breathEnabled
+      ? THREE.MathUtils.clamp(velocityNormalized * this.breathGain, 0, 1)
+      : 0
+    this.breathIntensity = THREE.MathUtils.lerp(
+      this.breathIntensity,
+      this.targetBreathIntensity,
+      this.breathSmoothing
+    )
+
+    const xSpreadFactor = this.getXSpreadFactor()
+
+    this.planes.forEach((plane, index) => {
+      const basePosition = plane.userData.basePosition || { x: 0, y: 0 }
+      const xPosition = basePosition.x * xSpreadFactor
+      const yPosition = basePosition.y
+      const zPosition = -index * this.planeGap
+      const opacity = Number.isFinite(plane.material.opacity) ? plane.material.opacity : 0
+      const depthInfluence = 1 + index * 0.05
+      const parallaxInfluence = this.parallaxEnabled ? opacity * depthInfluence : 0
+
+      const parallaxOffsetX = this.pointerCurrent.x * this.parallaxAmountX * parallaxInfluence
+      const parallaxOffsetY = this.pointerCurrent.y * this.parallaxAmountY * parallaxInfluence
+      const gestureOffsetY = this.gestureParallaxCurrent * parallaxInfluence
+
+      plane.position.x = xPosition + parallaxOffsetX
+      plane.position.y = yPosition + parallaxOffsetY + gestureOffsetY
+      plane.position.z = zPosition
+
+      const breathInfluence = this.breathEnabled ? this.breathIntensity * opacity : 0
+      const tiltX = -this.pointerCurrent.y * this.breathTiltAmount * breathInfluence
+      const tiltY = this.pointerCurrent.x * this.breathTiltAmount * breathInfluence
+      plane.rotation.x = tiltX
+      plane.rotation.y = tiltY
+      plane.rotation.z = 0
+
+      const aspectRatio = plane.userData.aspectRatio || 1
+      const baseScale =
+        window.innerWidth <= this.mobileBreakpoint ? this.mobilePlaneScale : this.desktopPlaneScale
+      const scalePulse = 1 + this.breathScaleAmount * breathInfluence
+      plane.scale.x = baseScale * aspectRatio * scalePulse
+      plane.scale.y = baseScale * scalePulse
+      plane.scale.z = 1
+    })
+  }
+
+  update(camera = null, scroll = null) {
     if (!camera) return
     this.updatePlaneVisibility(camera.position.z)
+    this.updatePlaneMotion(scroll)
+  }
+
+  dispose() {
+    window.removeEventListener('pointermove', this.onPointerMove)
+    window.removeEventListener('pointerleave', this.onPointerLeave)
   }
 }
 

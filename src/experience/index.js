@@ -24,7 +24,7 @@ class Experience {
   }
 
   update(time, camera = null, scroll = null) {
-    this.gallery.update(camera)
+    this.gallery.update(camera, scroll)
     this.label.update(camera)
     if (camera) {
       const planeBlendData = this.gallery.getPlaneBlendData(camera.position.z)
