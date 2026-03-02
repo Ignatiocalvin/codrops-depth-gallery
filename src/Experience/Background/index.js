@@ -13,27 +13,27 @@ class Background {
     this.material = null
     this.mesh = null
 
-    this.topColor = new THREE.Color('#ff0000')
-    this.midColor = new THREE.Color('#00ff00')
-    this.bottomColor = new THREE.Color('#0000ff')
-    this.accentColor = new THREE.Color('#ffffff')
-    this.nextTopColor = new THREE.Color()
-    this.nextMidColor = new THREE.Color()
-    this.nextBottomColor = new THREE.Color()
-    this.nextAccentColor = new THREE.Color()
-    this.blobCenter = new THREE.Vector2(0.62, 0.46)
-    this.baseBlobRadius = 0.34
-    this.baseBlobStrength = 0.24
+    this.bgColor = new THREE.Color('#FBE8CD')
+    this.blob1Color = new THREE.Color('#FFD56D')
+    this.blob2Color = new THREE.Color('#5D816A')
+    this.nextBgColor = new THREE.Color()
+    this.nextBlob1Color = new THREE.Color()
+    this.nextBlob2Color = new THREE.Color()
+
+    this.baseBlobRadius = 0.65
+    this.secondaryBlobRadiusRatio = 0.78
+    this.baseBlobStrength = 0.9
+
     this.depthToRadiusAmount = 0.08
-    this.velocityToStrengthAmount = 0.16
+    this.velocityToStrengthAmount = 0.1
     this.motionSmoothing = 0.1
     this.motionDepthProgress = 0
     this.motionVelocityIntensity = 0
     this.smoothedDepthProgress = 0
     this.smoothedVelocityIntensity = 0
+
     this.blobRadius = this.baseBlobRadius
     this.blobStrength = this.baseBlobStrength
-    this.accentStrength = 0.28
     this.noiseStrength = 0.04
   }
 
@@ -49,38 +49,31 @@ class Background {
       depthWrite: false,
       depthTest: false,
       uniforms: {
-        uTopColor: { value: this.topColor },
-        uMidColor: { value: this.midColor },
-        uBottomColor: { value: this.bottomColor },
-        uAccentColor: { value: this.accentColor },
-        uAccentStrength: { value: this.accentStrength },
+        uBgColor: { value: this.bgColor },
+        uBlob1Color: { value: this.blob1Color },
+        uBlob2Color: { value: this.blob2Color },
         uNoiseStrength: { value: this.noiseStrength },
-        uBlobCenter: { value: this.blobCenter },
         uBlobRadius: { value: this.blobRadius },
+        uBlobRadiusSecondary: { value: this.blobRadius * this.secondaryBlobRadiusRatio },
         uBlobStrength: { value: this.blobStrength },
+        uTime: { value: 0 },
+        uVelocityIntensity: { value: 0 },
       },
     })
 
     const geometry = new THREE.PlaneGeometry(2, 2)
     this.mesh = new THREE.Mesh(geometry, this.material)
     this.scene.add(this.mesh)
-    this.setMoodColors({
-      top: '#ff0000',
-      mid: '#00ff00',
-      bottom: '#0000ff',
-      accentColor: '#ffffff',
-    })
     this.applyMotionToBlob()
     this.bindDebug()
 
     this.isInitialized = true
   }
 
-  setMoodColors({ top, mid, bottom, accentColor } = {}) {
-    if (top) this.topColor.set(top)
-    if (mid) this.midColor.set(mid)
-    if (bottom) this.bottomColor.set(bottom)
-    if (accentColor) this.accentColor.set(accentColor)
+  setMoodColors({ bg, blob1, blob2 } = {}) {
+    if (bg) this.bgColor.set(bg)
+    if (blob1) this.blob1Color.set(blob1)
+    if (blob2) this.blob2Color.set(blob2)
 
     this.updateUniformColors()
   }
@@ -94,14 +87,9 @@ class Background {
       return
     }
 
-    this.topColor.set(currentMood.top).lerp(this.nextTopColor.set(nextMood.top), safeBlend)
-    this.midColor.set(currentMood.mid).lerp(this.nextMidColor.set(nextMood.mid), safeBlend)
-    this.bottomColor
-      .set(currentMood.bottom)
-      .lerp(this.nextBottomColor.set(nextMood.bottom), safeBlend)
-    this.accentColor
-      .set(currentMood.accentColor || currentMood.mid)
-      .lerp(this.nextAccentColor.set(nextMood.accentColor || nextMood.mid), safeBlend)
+    this.bgColor.set(currentMood.bg).lerp(this.nextBgColor.set(nextMood.bg), safeBlend)
+    this.blob1Color.set(currentMood.blob1).lerp(this.nextBlob1Color.set(nextMood.blob1), safeBlend)
+    this.blob2Color.set(currentMood.blob2).lerp(this.nextBlob2Color.set(nextMood.blob2), safeBlend)
 
     this.updateUniformColors()
   }
@@ -109,11 +97,9 @@ class Background {
   updateUniformColors() {
     if (!this.material) return
 
-    this.material.uniforms.uTopColor.value.copy(this.topColor)
-    this.material.uniforms.uMidColor.value.copy(this.midColor)
-    this.material.uniforms.uBottomColor.value.copy(this.bottomColor)
-    this.material.uniforms.uAccentColor.value.copy(this.accentColor)
-    this.material.uniforms.uAccentStrength.value = this.accentStrength
+    this.material.uniforms.uBgColor.value.copy(this.bgColor)
+    this.material.uniforms.uBlob1Color.value.copy(this.blob1Color)
+    this.material.uniforms.uBlob2Color.value.copy(this.blob2Color)
     this.material.uniforms.uNoiseStrength.value = this.noiseStrength
   }
 
@@ -121,6 +107,8 @@ class Background {
     if (!this.material) return
 
     this.material.uniforms.uBlobRadius.value = this.blobRadius
+    this.material.uniforms.uBlobRadiusSecondary.value =
+      this.blobRadius * this.secondaryBlobRadiusRatio
     this.material.uniforms.uBlobStrength.value = this.blobStrength
   }
 
@@ -153,14 +141,17 @@ class Background {
       targetObject: this,
       property: 'baseBlobRadius',
       label: 'Blob Radius',
-      options: {
-        min: 0.05,
-        max: 1,
-        step: 0.01,
-      },
-      onChange: () => {
-        this.applyMotionToBlob()
-      },
+      options: { min: 0.1, max: 1, step: 0.01 },
+      onChange: () => { this.applyMotionToBlob() },
+    })
+
+    this.debug.addBinding({
+      folderTitle: 'Background',
+      targetObject: this,
+      property: 'secondaryBlobRadiusRatio',
+      label: 'Blob 2 Size',
+      options: { min: 0.3, max: 1.2, step: 0.01 },
+      onChange: () => { this.applyMotionToBlob() },
     })
 
     this.debug.addBinding({
@@ -168,80 +159,23 @@ class Background {
       targetObject: this,
       property: 'baseBlobStrength',
       label: 'Blob Strength',
-      options: {
-        min: 0,
-        max: 1,
-        step: 0.01,
-      },
-      onChange: () => {
-        this.applyMotionToBlob()
-      },
-    })
-
-    this.debug.addBinding({
-      folderTitle: 'Background',
-      targetObject: this,
-      property: 'depthToRadiusAmount',
-      label: 'Radius Motion',
-      options: {
-        min: 0,
-        max: 0.4,
-        step: 0.01,
-      },
-      onChange: () => {
-        this.applyMotionToBlob()
-      },
-    })
-
-    this.debug.addBinding({
-      folderTitle: 'Background',
-      targetObject: this,
-      property: 'velocityToStrengthAmount',
-      label: 'Strength Motion',
-      options: {
-        min: 0,
-        max: 0.6,
-        step: 0.01,
-      },
-      onChange: () => {
-        this.applyMotionToBlob()
-      },
-    })
-
-    this.debug.addBinding({
-      folderTitle: 'Background',
-      targetObject: this,
-      property: 'accentStrength',
-      label: 'Accent Strength',
-      options: {
-        min: 0,
-        max: 1,
-        step: 0.01,
-      },
-      onChange: () => {
-        this.updateUniformColors()
-      },
+      options: { min: 0, max: 1, step: 0.01 },
+      onChange: () => { this.applyMotionToBlob() },
     })
 
     this.debug.addBinding({
       folderTitle: 'Background',
       targetObject: this,
       property: 'noiseStrength',
-      label: 'Noise Strength',
-      options: {
-        min: 0,
-        max: 0.2,
-        step: 0.005,
-      },
-      onChange: () => {
-        this.updateUniformColors()
-      },
+      label: 'Noise',
+      options: { min: 0, max: 0.2, step: 0.005 },
+      onChange: () => { this.updateUniformColors() },
     })
 
     this.isDebugBound = true
   }
 
-  update() {
+  update(time = 0) {
     this.smoothedDepthProgress = THREE.MathUtils.lerp(
       this.smoothedDepthProgress,
       this.motionDepthProgress,
@@ -252,6 +186,11 @@ class Background {
       this.motionVelocityIntensity,
       this.motionSmoothing
     )
+
+    if (this.material) {
+      this.material.uniforms.uTime.value = time
+      this.material.uniforms.uVelocityIntensity.value = this.smoothedVelocityIntensity
+    }
 
     this.applyMotionToBlob()
   }

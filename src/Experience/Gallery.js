@@ -73,13 +73,10 @@ class Gallery {
           ? textureImage.width / textureImage.height
           : 1
       const fallbackColor = plane.fallbackColor || '#ffffff'
-      const fallbackGradient = {
-        top: fallbackColor,
-        mid: fallbackColor,
-        bottom: fallbackColor,
-      }
-      const gradient = plane.gradient || fallbackGradient
-      const accentColor = plane.accentColor || gradient.mid || fallbackColor
+      const accentColor = plane.accentColor || fallbackColor
+      const bgColor = plane.bgColor || fallbackColor
+      const blob1Color = plane.blob1Color || fallbackColor
+      const blob2Color = plane.blob2Color || fallbackColor
       const labelData = this.getPlaneLabelData(plane, this.planes.length)
       const planeMaterial = new THREE.MeshBasicMaterial({
         color: fallbackColor,
@@ -92,8 +89,10 @@ class Gallery {
       const planeMesh = new THREE.Mesh(planeGeometry, planeMaterial)
       planeMesh.userData.basePosition = plane.position
       planeMesh.userData.baseColor = fallbackColor
-      planeMesh.userData.gradient = gradient
       planeMesh.userData.accentColor = accentColor
+      planeMesh.userData.bgColor = bgColor
+      planeMesh.userData.blob1Color = blob1Color
+      planeMesh.userData.blob2Color = blob2Color
       planeMesh.userData.label = labelData
       planeMesh.userData.texture = texture
       planeMesh.userData.aspectRatio = aspectRatio
@@ -183,15 +182,10 @@ class Gallery {
   getMoodColorsByIndex(index) {
     if (index < 0 || index >= this.planes.length) return null
 
-    const gradient = this.planes[index].userData.gradient
-    if (!gradient) return null
+    const { bgColor, blob1Color, blob2Color } = this.planes[index].userData
+    if (!bgColor) return null
 
-    return {
-      top: gradient.top,
-      mid: gradient.mid,
-      bottom: gradient.bottom,
-      accentColor: this.planes[index].userData.accentColor,
-    }
+    return { bg: bgColor, blob1: blob1Color, blob2: blob2Color }
   }
 
   getMoodBlendData(cameraZ) {
