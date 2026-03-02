@@ -2,7 +2,7 @@
 
 A Three.js depth-scrolling image gallery where scroll velocity drives atmospheric mood and subtle motion, while each image defines its own background palette.
 
-![Atmospheric Depth Gallery screenshot](/public/screenshot.png)
+![Atmospheric Depth Gallery screenshot](/ressources/screenshot.png)
 
 [Article on Codrops](https://tympanus.net/codrops/?p=)
 
@@ -35,7 +35,7 @@ npm run preview
 ## Credits
 
 - Built with [Three.js](https://threejs.org/)￼
-- Imagery generated with Midjourney
+- Imagery from [Lummi.ai](https://lummi.ai/)￼
 
 ## Misc
 
