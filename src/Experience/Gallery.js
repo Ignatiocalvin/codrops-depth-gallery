@@ -25,12 +25,6 @@ class Gallery {
     this.parallaxSmoothing = 0.08
     this.pointerTarget = new THREE.Vector2(0, 0)
     this.pointerCurrent = new THREE.Vector2(0, 0)
-    this.gestureParallaxEnabled = true
-    this.gestureParallaxAmountY = 0.04
-    this.gestureParallaxSmoothing = 0.12
-    this.gestureParallaxCurrent = 0
-    this.gestureParallaxTarget = 0
-
     this.breathEnabled = true
     this.breathTiltAmount = 0.045
     this.breathScaleAmount = 0.03
@@ -38,6 +32,12 @@ class Gallery {
     this.breathGain = 1.1
     this.breathIntensity = 0
     this.targetBreathIntensity = 0
+
+    this.gestureParallaxEnabled = true
+    this.gestureParallaxAmountY = 0.05
+    this.gestureParallaxSmoothing = 0.05
+    this.gestureParallaxCurrent = 0
+    this.gestureParallaxTarget = 0
 
     this.onPointerMove = (event) => {
       const x = (event.clientX / window.innerWidth) * 2 - 1
@@ -364,7 +364,7 @@ class Gallery {
       label: 'Gesture Y',
       options: {
         min: 0,
-        max: 0.4,
+        max: 0.5,
         step: 0.01,
       },
     })
@@ -438,23 +438,15 @@ class Gallery {
     this.pointerCurrent.lerp(this.pointerTarget, this.parallaxSmoothing)
 
     const velocityMax = Math.max(scroll?.velocityMax || 1, 0.0001)
-    const signedVelocityNormalized = THREE.MathUtils.clamp(
-      (scroll?.velocity || 0) / velocityMax,
-      -1,
-      1
-    )
     const velocityNormalized = THREE.MathUtils.clamp(
       Math.abs(scroll?.velocity || 0) / velocityMax,
       0,
       1
     )
-    this.gestureParallaxTarget = this.gestureParallaxEnabled
-      ? -signedVelocityNormalized * this.gestureParallaxAmountY
-      : 0
-    this.gestureParallaxCurrent = THREE.MathUtils.lerp(
-      this.gestureParallaxCurrent,
-      this.gestureParallaxTarget,
-      this.gestureParallaxSmoothing
+    const signedVelocityNormalized = THREE.MathUtils.clamp(
+      (scroll?.velocity || 0) / velocityMax,
+      -1,
+      1
     )
     this.targetBreathIntensity = this.breathEnabled
       ? THREE.MathUtils.clamp(velocityNormalized * this.breathGain, 0, 1)
@@ -463,6 +455,12 @@ class Gallery {
       this.breathIntensity,
       this.targetBreathIntensity,
       this.breathSmoothing
+    )
+    this.gestureParallaxTarget = this.gestureParallaxEnabled ? signedVelocityNormalized : 0
+    this.gestureParallaxCurrent = THREE.MathUtils.lerp(
+      this.gestureParallaxCurrent,
+      this.gestureParallaxTarget,
+      this.gestureParallaxSmoothing
     )
 
     const xSpreadFactor = this.getXSpreadFactor()
@@ -478,7 +476,7 @@ class Gallery {
 
       const parallaxOffsetX = this.pointerCurrent.x * this.parallaxAmountX * parallaxInfluence
       const parallaxOffsetY = this.pointerCurrent.y * this.parallaxAmountY * parallaxInfluence
-      const gestureOffsetY = this.gestureParallaxCurrent * parallaxInfluence
+      const gestureOffsetY = this.gestureParallaxCurrent * this.gestureParallaxAmountY
 
       plane.position.x = xPosition + parallaxOffsetX
       plane.position.y = yPosition + parallaxOffsetY + gestureOffsetY
