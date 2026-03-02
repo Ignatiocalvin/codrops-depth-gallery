@@ -1,7 +1,7 @@
 {
-  "name": "codrops-depth-gallery",
+  "name": "codrops-atmospheric-depth-gallery",
   "version": "1.0.0",
-  "description": "A Three.js depth-scrolling gallery with velocity-driven feedback, created for a Codrops tutorial.",
+  "description": "A Three.js depth gallery where images shape their own environment — mood-driven GLSL backgrounds, parallax motion, and velocity-reactive effects.",
   "author": {
     "name": "Houmahani Kane",
     "email": "houm.kane@gmail.com",

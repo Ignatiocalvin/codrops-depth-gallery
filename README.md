@@ -1,17 +1,8 @@
-_How to use this template:_
-
-- Styles for the demo go in css/base.css
-- Add build instructions and credits to the README.md
-- For writing the tutorial, take a look at https://github.com/crnacura/CodropsTemplate/wiki/Writing-the-article
-- Delete this 'how to' intro in the final version and leave the following (fill in title/description, credits and social links of your likings, we'll do the rest):
-
----
-
-# Mood & Depth Gallery
+# Atmospheric Depth Gallery
 
 A Three.js depth-scrolling image gallery where scroll velocity drives atmospheric mood and subtle motion, while each image defines its own background palette.
 
-![Depth Gallery screenshot](/public/screenshot.png)
+![Atmospheric Depth Gallery screenshot](/public/screenshot.png)
 
 [Article on Codrops](https://tympanus.net/codrops/?p=)
 
@@ -44,11 +35,11 @@ npm run preview
 ## Credits
 
 - Built with [Three.js](https://threejs.org/)￼
-- Imagery generated with [Lummi](https://www.lummi.ai/)
+- Imagery generated with Midjourney
 
 ## Misc
 
-Follow Houmahani Kane: [X](https://x.com/houma_hani), [Instagram](https://www.instagram.com/houma.hani/), [GitHub](https://github.com/houmahani/), [LinkedIn](https://www.linkedin.com/in/houmahanikane/), [Codepen](https://codepen.io/houmahani)
+Follow Houmahani Kane: [Portfolio](https://houmahani.com), [X](https://x.com/houma_hani), [Instagram](https://www.instagram.com/houma.hani/), [LinkedIn](https://www.linkedin.com/in/houmahanikane/), [GitHub](https://github.com/houmahani/)
 
 Follow Codrops: [X](http://www.x.com/codrops), [Facebook](https://www.facebook.com/codrops), [Instagram](https://www.instagram.com/codropsss/), [LinkedIn](https://www.linkedin.com/company/codrops/), [GitHub](https://github.com/codrops)
 
