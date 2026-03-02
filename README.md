@@ -34,8 +34,9 @@ npm run preview
 
 ## Credits
 
-- Built with [Three.js](https://threejs.org/)￼
-- Imagery from [Lummi.ai](https://lummi.ai/)￼
+- Built with [Three.js](https://threejs.org/)
+- Imagery from [Lummi.ai](https://lummi.ai/)
+- Color chip editorial layout inspired by [@thisislandscape](https://www.instagram.com/p/DU2JTU_AEwM/?img_index=3) on Instagram
 
 ## Misc
 
