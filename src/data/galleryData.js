@@ -1,14 +1,14 @@
-import STILL_LIFE01 from '@/assets/still-life/still-life-01.webp'
-import STILL_LIFE02 from '@/assets/still-life/still-life-02.webp'
-import STILL_LIFE03 from '@/assets/still-life/still-life-03.webp'
-import STILL_LIFE04 from '@/assets/still-life/still-life-04.webp'
-import STILL_LIFE05 from '@/assets/still-life/still-life-05.webp'
+import FLOWER01 from '@/assets/flower-01.webp'
+import FLOWER02 from '@/assets/flower-02.webp'
+import FLOWER03 from '@/assets/flower-03.webp'
+import FLOWER04 from '@/assets/flower-04.webp'
+import FLOWER05 from '@/assets/flower-05.webp'
 
 const galleryPlaneData = [
   {
     fallbackColor: '#FECA4F',
     accentColor: '#FECA4F',
-    textureSrc: STILL_LIFE01,
+    textureSrc: FLOWER01,
     position: { x: -0.9, y: 0 },
     bgColor: '#fffaf0',
     blob1Color: '#ffdf94',
@@ -23,7 +23,7 @@ const galleryPlaneData = [
   {
     fallbackColor: '#80455A',
     accentColor: '#80455A',
-    textureSrc: STILL_LIFE02,
+    textureSrc: FLOWER02,
     position: { x: 0.8, y: 0 },
     bgColor: '#fffaf0',
     blob1Color: '#d29a41',
@@ -38,7 +38,7 @@ const galleryPlaneData = [
   {
     fallbackColor: '#FA7B71',
     accentColor: '#FA7B71',
-    textureSrc: STILL_LIFE03,
+    textureSrc: FLOWER03,
     position: { x: -0.7, y: 0 },
     bgColor: '#5f81ab',
     blob1Color: '#f88b8d',
@@ -53,7 +53,7 @@ const galleryPlaneData = [
   {
     fallbackColor: '#3C72C6',
     accentColor: '#3C72C6',
-    textureSrc: STILL_LIFE04,
+    textureSrc: FLOWER04,
     position: { x: 1, y: 0 },
     bgColor: '#5B9BC2',
     blob1Color: '#ffaa00',
@@ -68,7 +68,7 @@ const galleryPlaneData = [
   {
     fallbackColor: '#FDD895',
     accentColor: '#FDD895',
-    textureSrc: STILL_LIFE05,
+    textureSrc: FLOWER05,
     position: { x: -0.7, y: 0 },
     bgColor: '#7D936E',
     blob1Color: '#FDD895',
