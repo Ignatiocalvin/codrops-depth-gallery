@@ -1,5 +1,4 @@
 import * as THREE from 'three'
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import Stats from 'three/examples/jsm/libs/stats.module.js'
 import { world } from '@/Experience/'
 import { Scroll } from '@/Experience/Scroll'
@@ -27,13 +26,6 @@ class Engine {
     // Camera
     this.camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100)
     this.camera.position.set(0, 0, 6)
-
-    // Orbit Controls
-    this.orbitControlsEnabled = false
-    this.controls = new OrbitControls(this.camera, this.canvas)
-    this.controls.enabled = this.orbitControlsEnabled
-    this.controls.enableDamping = true
-    this.controls.enablePan = false
 
     // Scroll
     this.scroll = new Scroll(this.camera, this.experience.gallery, this.debug)
@@ -136,11 +128,7 @@ class Engine {
 
     const time = performance.now()
 
-    this.scroll.update(this.orbitControlsEnabled)
-
-    if (this.orbitControlsEnabled) {
-      this.controls.update()
-    }
+    this.scroll.update()
     this.experience.update(time, this.camera, this.scroll)
 
     this.renderer.clear(true, true, true)
@@ -176,16 +164,6 @@ class Engine {
 
   bindDebug() {
     if (!this.debug || this.isDebugBound) return
-
-    this.debug.addBinding({
-      folderTitle: 'Engine',
-      targetObject: this,
-      property: 'orbitControlsEnabled',
-      label: 'Orbit Controls',
-      onChange: (value) => {
-        this.controls.enabled = value
-      },
-    })
 
     this.debug.addBinding({
       folderTitle: 'Engine',

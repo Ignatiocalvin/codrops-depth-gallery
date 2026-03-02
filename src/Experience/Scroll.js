@@ -187,7 +187,7 @@ class Scroll {
     this.velocityVisualizerValueElement.textContent = this.velocity.toFixed(4)
   }
 
-  update(isOrbitControlsEnabled = false) {
+  update() {
     this.updateCameraBounds()
     this.scrollCurrent = THREE.MathUtils.lerp(
       this.scrollCurrent,
@@ -205,8 +205,6 @@ class Scroll {
 
     this.updateVelocity()
     this.updateVelocityVisualizer()
-
-    if (isOrbitControlsEnabled) return
 
     const nextCameraZ = this.cameraZFromScroll(this.scrollCurrent)
     if (this.useScrollBounds) {
