@@ -142,7 +142,9 @@ class Background {
       property: 'baseBlobRadius',
       label: 'Blob Radius',
       options: { min: 0.1, max: 1, step: 0.01 },
-      onChange: () => { this.applyMotionToBlob() },
+      onChange: () => {
+        this.applyMotionToBlob()
+      },
     })
 
     this.debug.addBinding({
@@ -151,7 +153,9 @@ class Background {
       property: 'secondaryBlobRadiusRatio',
       label: 'Blob 2 Size',
       options: { min: 0.3, max: 1.2, step: 0.01 },
-      onChange: () => { this.applyMotionToBlob() },
+      onChange: () => {
+        this.applyMotionToBlob()
+      },
     })
 
     this.debug.addBinding({
@@ -160,7 +164,9 @@ class Background {
       property: 'baseBlobStrength',
       label: 'Blob Strength',
       options: { min: 0, max: 1, step: 0.01 },
-      onChange: () => { this.applyMotionToBlob() },
+      onChange: () => {
+        this.applyMotionToBlob()
+      },
     })
 
     this.debug.addBinding({
@@ -169,7 +175,9 @@ class Background {
       property: 'noiseStrength',
       label: 'Noise',
       options: { min: 0, max: 0.2, step: 0.005 },
-      onChange: () => { this.updateUniformColors() },
+      onChange: () => {
+        this.updateUniformColors()
+      },
     })
 
     this.isDebugBound = true

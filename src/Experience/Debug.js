@@ -43,14 +43,7 @@ class Debug {
     })
   }
 
-  addBinding({
-    folderTitle,
-    targetObject,
-    property,
-    label,
-    options = {},
-    onChange,
-  }) {
+  addBinding({ folderTitle, targetObject, property, label, options = {}, onChange }) {
     const folder = this.getFolder(folderTitle)
     const binding = folder.addBinding(targetObject, property, {
       label,

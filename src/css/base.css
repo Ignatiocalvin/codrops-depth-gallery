@@ -11,8 +11,9 @@
   --color-link: #fff;
   --color-link-hover: #fff;
   --page-padding: 1.5rem;
-  --ui-font: 'IBM Plex Mono', 'SFMono-Regular', Menlo, Monaco, Consolas, 'Liberation Mono',
-    'Courier New', monospace;
+  --ui-font:
+    'IBM Plex Mono', 'SFMono-Regular', Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
+    monospace;
   --ui-tracking: 0.08em;
 }
 
