@@ -45,14 +45,16 @@
   background: rgba(4, 10, 18, 0.8);
   backdrop-filter: blur(6px);
   color: #ffffff;
-  font-family: ui-monospace, monospace;
+  font-family: var(--ui-font);
+  text-transform: uppercase;
+  letter-spacing: var(--ui-tracking);
   pointer-events: none;
 }
 
 .velocity-visualizer__label,
 .velocity-visualizer__value {
   margin: 0;
-  font-size: 11px;
+  font-size: 10px;
 }
 
 .velocity-visualizer__value {
@@ -84,60 +86,160 @@
   overflow: hidden;
 }
 
-.plane-label-text {
-  width: min(24vw, 240px);
+.plane-label-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  pointer-events: none;
+  transition: opacity 260ms ease;
+  color: rgba(244, 244, 244, 0.92);
+}
+
+.plane-label-overlay__left {
+  position: absolute;
+  left: clamp(2.5rem, 8vw, 12rem);
+  top: 50%;
+  transform: none;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.plane-label-overlay__index {
+  margin: 0;
+  font-size: 9px;
+  opacity: 1;
+}
+
+.plane-label-overlay__center-line {
+  position: absolute;
+  left: 48%;
+  top: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+  font-size: clamp(9px, 0.78vw, 11px);
+  opacity: 1;
+  white-space: nowrap;
+}
+
+.plane-label-overlay__swatch {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: inline-block;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.14);
+}
+
+.plane-label-overlay__right {
+  position: absolute;
+  right: clamp(2.5rem, 7vw, 10rem);
+  top: 50%;
+  transform: none;
+}
+
+.plane-label-card {
+  width: min(28vw, 360px);
+  display: grid;
+  grid-template-columns: 1fr;
+  align-items: start;
   pointer-events: none;
   opacity: 1;
-  color: rgba(244, 244, 244, 0.9);
-  font-family: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  color: inherit;
+  font-family: var(--ui-font);
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  line-height: 1.2;
+  letter-spacing: var(--ui-tracking);
+  line-height: 1.15;
 }
 
-.plane-label-text--right {
-  text-align: left;
+.plane-label-card__word {
+  margin: 0;
+  font-size: clamp(9px, 0.78vw, 11px);
+  white-space: nowrap;
 }
 
-.plane-label-text--left {
-  text-align: right;
+.plane-label-card__specs {
+  margin: 0;
+  display: grid;
+  gap: 0.25rem;
 }
 
-.plane-label-text__serial,
-.plane-label-text__title,
-.plane-label-text__subtitle,
-.plane-label-text__meta {
+.plane-label-card__row {
+  margin: 0;
+  display: grid;
+  grid-template-columns: 3.5rem 1fr;
+  align-items: baseline;
+  gap: 0.8rem;
+}
+
+.plane-label-card__row dt,
+.plane-label-card__row dd {
   margin: 0;
 }
 
-.plane-label-text__serial {
-  font-size: 10px;
-  opacity: 0.64;
+.plane-label-card__row dt {
+  font-size: 9px;
+  opacity: 1;
 }
 
-.plane-label-text__title {
-  margin-top: 0.24rem;
-  font-size: clamp(12px, 0.95vw, 16px);
-}
-
-.plane-label-text__subtitle {
-  margin-top: 0.2rem;
-  font-size: clamp(10px, 0.76vw, 12px);
-  opacity: 0.84;
-}
-
-.plane-label-text__meta {
-  margin-top: 0.28rem;
-  font-size: 10px;
-  opacity: 0.62;
+.plane-label-card__value {
+  font-size: clamp(9px, 0.72vw, 11px);
+  opacity: 1;
 }
 
 @media (max-width: 53em) {
-  .plane-label-text {
-    width: min(58vw, 240px);
+  .plane-label-overlay {
+    inset: auto 0 max(4.25rem, env(safe-area-inset-bottom)) 0;
+    display: grid;
+    grid-template-columns: auto auto;
+    justify-content: space-between;
+    align-items: start;
+    column-gap: 1.5rem;
+    row-gap: 0.55rem;
+    padding: 0 max(1rem, env(safe-area-inset-right)) 0 max(1rem, env(safe-area-inset-left));
   }
 
-  .plane-label-text__title {
-    font-size: 11px;
+  .plane-label-overlay__left {
+    position: static;
+    transform: none;
+    gap: 0.5rem;
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .plane-label-overlay__center-line {
+    display: block;
+    position: static;
+    transform: none;
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: start;
+    margin: 0;
+    font-size: 9px;
+    opacity: 1;
+    white-space: nowrap;
+  }
+
+  .plane-label-overlay__right {
+    position: static;
+    transform: none;
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  .plane-label-card {
+    width: auto;
+    max-width: min(58vw, 270px);
+  }
+
+  .plane-label-card__word {
+    font-size: 10px;
+  }
+
+  .plane-label-card__row {
+    grid-template-columns: 2.8rem 1fr;
+    gap: 0.6rem;
+  }
+
+  .plane-label-card__value {
+    font-size: 9px;
   }
 }

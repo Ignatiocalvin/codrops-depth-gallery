@@ -104,19 +104,15 @@ class Gallery {
 
   getPlaneLabelData(planeDefinition, index) {
     const fallback = {
-      serial: String(index + 1).padStart(2, '0'),
-      title: 'editorial frame',
-      subtitle: 'visual story',
-      meta: 'art direction',
+      word: `tone ${String(index + 1).padStart(2, '0')}`,
+      pms: 'N/A',
       color: '',
     }
     const label = planeDefinition.label || fallback
 
     return {
-      serial: label.serial || fallback.serial,
-      title: label.title || fallback.title,
-      subtitle: label.subtitle || fallback.subtitle,
-      meta: label.meta || fallback.meta,
+      word: label.word || fallback.word,
+      pms: label.pms || fallback.pms,
       color: label.color || fallback.color,
     }
   }
