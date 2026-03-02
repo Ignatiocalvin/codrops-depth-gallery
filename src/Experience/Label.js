@@ -5,8 +5,7 @@ class Label {
     this.overlayElement = null
     this.leftIndexElement = null
     this.wordElement = null
-    this.centerLineElement = null
-    this.swatchElement = null
+    this.chipElement = null
     this.cmykValueElement = null
     this.rgbValueElement = null
     this.hexValueElement = null
@@ -21,10 +20,9 @@ class Label {
       <div class="plane-label-overlay__left">
         <p class="plane-label-overlay__index"></p>
         <p class="plane-label-card__word"></p>
-        <span class="plane-label-overlay__swatch"></span>
+        <span class="plane-label-overlay__chip"></span>
       </div>
-      <p class="plane-label-overlay__center-line"></p>
-      <article class="plane-label-card plane-label-overlay__right">
+<article class="plane-label-card plane-label-overlay__right">
         <dl class="plane-label-card__specs">
           <div class="plane-label-card__row">
             <dt>CMYK</dt>
@@ -50,8 +48,7 @@ class Label {
       element,
       leftIndexElement: element.querySelector('.plane-label-overlay__index'),
       wordElement: element.querySelector('.plane-label-card__word'),
-      centerLineElement: element.querySelector('.plane-label-overlay__center-line'),
-      swatchElement: element.querySelector('.plane-label-overlay__swatch'),
+      chipElement: element.querySelector('.plane-label-overlay__chip'),
       cmykValueElement: element.querySelector('.plane-label-card__value--cmyk'),
       rgbValueElement: element.querySelector('.plane-label-card__value--rgb'),
       hexValueElement: element.querySelector('.plane-label-card__value--hex'),
@@ -66,8 +63,7 @@ class Label {
       element,
       leftIndexElement,
       wordElement,
-      centerLineElement,
-      swatchElement,
+      chipElement,
       cmykValueElement,
       rgbValueElement,
       hexValueElement,
@@ -77,8 +73,7 @@ class Label {
     this.overlayElement = element
     this.leftIndexElement = leftIndexElement
     this.wordElement = wordElement
-    this.centerLineElement = centerLineElement
-    this.swatchElement = swatchElement
+    this.chipElement = chipElement
     this.cmykValueElement = cmykValueElement
     this.rgbValueElement = rgbValueElement
     this.hexValueElement = hexValueElement
@@ -151,7 +146,7 @@ class Label {
     const cmyk = this.rgbToCmyk(rgb)
 
     return {
-      swatchHex: normalizedAccentColor,
+      chipHex: normalizedAccentColor,
       cmyk: `${cmyk.c}, ${cmyk.m}, ${cmyk.y}, ${cmyk.k}`,
       rgb: `${rgb.r}, ${rgb.g}, ${rgb.b}`,
       hex: normalizedAccentColor.slice(1).toUpperCase(),
@@ -174,8 +169,7 @@ class Label {
 
     this.leftIndexElement.textContent = String(planeIndex + 1).padStart(2, '0')
     this.wordElement.textContent = labelData.word || 'tone'
-    this.centerLineElement.textContent = labelData.line || `${labelData.word || 'tone'} palette`
-    this.swatchElement.style.backgroundColor = colorSpecs.swatchHex
+    this.chipElement.style.backgroundColor = colorSpecs.chipHex
     this.cmykValueElement.textContent = colorSpecs.cmyk
     this.rgbValueElement.textContent = colorSpecs.rgb
     this.hexValueElement.textContent = colorSpecs.hex
@@ -207,8 +201,7 @@ class Label {
     this.overlayElement = null
     this.leftIndexElement = null
     this.wordElement = null
-    this.centerLineElement = null
-    this.swatchElement = null
+    this.chipElement = null
     this.cmykValueElement = null
     this.rgbValueElement = null
     this.hexValueElement = null
