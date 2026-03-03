@@ -78,14 +78,6 @@
   background: #7fffd4;
 }
 
-.label-layer {
-  position: fixed;
-  inset: 0;
-  z-index: 40;
-  pointer-events: none;
-  overflow: hidden;
-}
-
 .plane-label-overlay {
   position: fixed;
   inset: 0;
@@ -108,17 +100,6 @@
   margin: 0;
   font-size: 9px;
   opacity: 1;
-}
-
-.plane-label-overlay__center-line {
-  position: absolute;
-  left: 48%;
-  top: 50%;
-  transform: translateX(-50%);
-  margin: 0;
-  font-size: clamp(9px, 0.78vw, 11px);
-  opacity: 1;
-  white-space: nowrap;
 }
 
 .plane-label-overlay__chip {

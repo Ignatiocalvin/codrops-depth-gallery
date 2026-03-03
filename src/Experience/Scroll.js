@@ -8,6 +8,7 @@ class Scroll {
     this.gallery = gallery
     this.debug = debug
 
+    // Scroll state
     this.scrollTarget = 0
     this.scrollCurrent = 0
     this.scrollSmoothing = 0.08
@@ -15,25 +16,32 @@ class Scroll {
     this.wheelScrollSpeed = 1
     this.touchScrollSpeed = 1.8
     this.previousScrollCurrent = 0
+    this.invertScroll = false
+
+    // Velocity
     this.rawVelocity = 0
     this.velocity = 0
     this.velocityDamping = 0.12
     this.velocityMax = 1.5
     this.velocityStopThreshold = 0.0001
-    this.invertScroll = false
+
+    // Bounds
     this.useScrollBounds = true
-    this.showVelocityVisualizer = true
-    this.debugUiVisible = false
     this.firstPlaneViewOffset = 5
     this.lastPlaneViewOffset = 5
     this.minCameraZ = -Infinity
     this.maxCameraZ = Infinity
     this.cameraStartZ = this.camera.position.z
+
+    // Debug UI
+    this.showVelocityVisualizer = true
+    this.debugUiVisible = false
     this.touchY = 0
     this.velocityVisualizerElement = null
     this.velocityVisualizerFillElement = null
     this.velocityVisualizerValueElement = null
 
+    // Input events
     this.onWheel = (event) => {
       event.preventDefault()
       const normalizedWheelDelta = this.normalizeWheelDelta(event) * this.wheelScrollSpeed
@@ -90,6 +98,7 @@ class Scroll {
   }
 
   scrollFromCameraZ(cameraZ) {
+    if (this.scrollToWorldFactor === 0) return 0
     return (this.cameraStartZ - cameraZ) / this.scrollToWorldFactor
   }
 

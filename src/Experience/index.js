@@ -19,8 +19,11 @@ class Experience {
     if (this.isInitialized) return
 
     await this.gallery.init(scene)
-    this.label.init(scene, camera)
+
+    this.label.init()
+
     this.background.init()
+
     const initialPlaneBlendData = this.gallery.getPlaneBlendData(camera.position.z)
     this.updateFrameTextTone(initialPlaneBlendData)
 
@@ -41,16 +44,23 @@ class Experience {
   }
 
   update(time, camera = null, scroll = null) {
+    // Gallery + label
     this.gallery.update(camera, scroll)
     this.label.update(camera)
+
+    // Camera-driven updates
     if (camera) {
+      // Frame text tone
       const planeBlendData = this.gallery.getPlaneBlendData(camera.position.z)
       this.updateFrameTextTone(planeBlendData)
+
+      // Mood colors
       const moodBlendData = this.gallery.getMoodBlendData(camera.position.z)
       if (moodBlendData) {
         this.background.setMoodBlend(moodBlendData)
       }
 
+      // Depth + velocity → background motion response
       const depthProgress = this.gallery.getDepthProgress(camera.position.z)
       const velocityMax = scroll?.velocityMax || 1
       const velocityIntensity = THREE.MathUtils.clamp(
@@ -68,6 +78,8 @@ class Experience {
         velocityIntensity: stabilizedVelocityIntensity,
       })
     }
+
+    // Background tick
     this.background.update(time)
   }
 }

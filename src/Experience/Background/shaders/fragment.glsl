@@ -1,6 +1,6 @@
 varying vec2 vUv;
 
-uniform vec3 uBgColor;
+uniform vec3 uBackgroundColor;
 uniform vec3 uBlob1Color;
 uniform vec3 uBlob2Color;
 uniform float uNoiseStrength;
@@ -10,37 +10,36 @@ uniform float uBlobStrength;
 uniform float uTime;
 uniform float uVelocityIntensity;
 
-float random(vec2 st) {
-  return fract(sin(dot(st, vec2(12.9898, 78.233))) * 43758.5453123);
+float random(vec2 coord) {
+  return fract(sin(dot(coord, vec2(12.9898, 78.233))) * 43758.5453123);
 }
 
 void main() {
   // Flat background color
-  vec3 color = uBgColor;
+  vec3 color = uBackgroundColor;
 
-  // Blob centers animated in shader — incommensurable frequencies (golden
-  // ratio 1.618, sqrt2 1.414) so the path never exactly repeats
-  float t = uTime * 0.00028;
+  // Blob centers subtely animated
+  float animTime = uTime * 0.00028;
   vec2 blob1Center = vec2(
-    0.50 + sin(t * 1.000) * 0.13 + sin(t * 1.618) * 0.05,
-    0.48 + cos(t * 0.794) * 0.09 + cos(t * 1.272) * 0.03
+    0.50 + sin(animTime * 1.000) * 0.13 + sin(animTime * 1.618) * 0.05,
+    0.48 + cos(animTime * 0.794) * 0.09 + cos(animTime * 1.272) * 0.03
   );
   vec2 blob2Center = vec2(
-    0.35 + cos(t * 0.927) * 0.11 + cos(t * 1.414) * 0.04,
-    0.55 + sin(t * 1.175) * 0.07 + sin(t * 0.618) * 0.03
+    0.35 + cos(animTime * 0.927) * 0.11 + cos(animTime * 1.414) * 0.04,
+    0.55 + sin(animTime * 1.175) * 0.07 + sin(animTime * 0.618) * 0.03
   );
 
-  // Two blobs — proto-02 style: 1 at center, 0 at edge
+  // Two blobs: 1 at center, 0 at edge
   float blob1 = smoothstep(uBlobRadius, 0.0, distance(vUv, blob1Center));
   float blob2 = smoothstep(uBlobRadiusSecondary, 0.0, distance(vUv, blob2Center));
 
-  // Harmonize blob colors toward bg before applying — keeps them atmospheric
-  vec3 b1 = mix(uBlob1Color, uBgColor, 0.35);
-  vec3 b2 = mix(uBlob2Color, uBgColor, 0.35);
-  color = mix(color, b1, blob1 * uBlobStrength);
-  color = mix(color, b2, blob2 * uBlobStrength);
+  // Soften blob colors toward background before applying
+  vec3 blob1SoftColor = mix(uBlob1Color, uBackgroundColor, 0.35);
+  vec3 blob2SoftColor = mix(uBlob2Color, uBackgroundColor, 0.35);
+  color = mix(color, blob1SoftColor, blob1 * uBlobStrength);
+  color = mix(color, blob2SoftColor, blob2 * uBlobStrength);
 
-  // Velocity luminance lift — subtle brightness bloom on fast scroll
+  // Velocity luminance lift
   color += uVelocityIntensity * 0.10;
 
   // Film grain

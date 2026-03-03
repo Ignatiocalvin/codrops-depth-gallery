@@ -22,7 +22,7 @@ class Label {
         <p class="plane-label-card__word"></p>
         <span class="plane-label-overlay__chip"></span>
       </div>
-<article class="plane-label-card plane-label-overlay__right">
+      <article class="plane-label-card plane-label-overlay__right">
         <dl class="plane-label-card__specs">
           <div class="plane-label-card__row">
             <dt>CMYK</dt>

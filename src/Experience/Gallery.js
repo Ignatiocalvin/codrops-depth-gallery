@@ -6,6 +6,8 @@ class Gallery {
     this.isInitialized = false
     this.isDebugBound = false
     this.debug = debug
+
+    // Planes
     this.planes = []
     this.texturesBySource = new Map()
     this.useTextures = true
@@ -19,12 +21,15 @@ class Gallery {
     this.planeFadeSampleOffset = 1
     this.planeFadeSmoothing = 0.14
 
+    // Parallax
     this.parallaxEnabled = true
     this.parallaxAmountX = 0.16
     this.parallaxAmountY = 0.08
     this.parallaxSmoothing = 0.08
     this.pointerTarget = new THREE.Vector2(0, 0)
     this.pointerCurrent = new THREE.Vector2(0, 0)
+
+    // Breath
     this.breathEnabled = true
     this.breathTiltAmount = 0.045
     this.breathScaleAmount = 0.03
@@ -33,12 +38,14 @@ class Gallery {
     this.breathIntensity = 0
     this.targetBreathIntensity = 0
 
+    // Gesture drift
     this.gestureParallaxEnabled = true
     this.gestureParallaxAmountY = 0.05
     this.gestureParallaxSmoothing = 0.05
-    this.gestureParallaxCurrent = 0
-    this.gestureParallaxTarget = 0
+    this.driftCurrent = 0
+    this.driftTarget = 0
 
+    // Pointer events
     this.onPointerMove = (event) => {
       const x = (event.clientX / window.innerWidth) * 2 - 1
       const y = (event.clientY / window.innerHeight) * 2 - 1
@@ -74,7 +81,7 @@ class Gallery {
           : 1
       const fallbackColor = plane.fallbackColor || '#ffffff'
       const accentColor = plane.accentColor || fallbackColor
-      const bgColor = plane.bgColor || fallbackColor
+      const backgroundColor = plane.backgroundColor || fallbackColor
       const blob1Color = plane.blob1Color || fallbackColor
       const blob2Color = plane.blob2Color || fallbackColor
       const labelData = this.getPlaneLabelData(plane, this.planes.length)
@@ -90,7 +97,7 @@ class Gallery {
       planeMesh.userData.basePosition = plane.position
       planeMesh.userData.baseColor = fallbackColor
       planeMesh.userData.accentColor = accentColor
-      planeMesh.userData.bgColor = bgColor
+      planeMesh.userData.backgroundColor = backgroundColor
       planeMesh.userData.blob1Color = blob1Color
       planeMesh.userData.blob2Color = blob2Color
       planeMesh.userData.label = labelData
@@ -133,7 +140,6 @@ class Gallery {
       const basePosition = plane.userData.basePosition || { x: 0, y: 0 }
       const xPosition = basePosition.x * xSpreadFactor
       plane.position.set(xPosition, basePosition.y, -index * this.planeGap)
-      plane.userData.layoutPosition = { x: xPosition, y: basePosition.y, z: -index * this.planeGap }
     })
   }
 
@@ -182,10 +188,10 @@ class Gallery {
   getMoodColorsByIndex(index) {
     if (index < 0 || index >= this.planes.length) return null
 
-    const { bgColor, blob1Color, blob2Color } = this.planes[index].userData
-    if (!bgColor) return null
+    const { backgroundColor, blob1Color, blob2Color } = this.planes[index].userData
+    if (!backgroundColor) return null
 
-    return { bg: bgColor, blob1: blob1Color, blob2: blob2Color }
+    return { background: backgroundColor, blob1: blob1Color, blob2: blob2Color }
   }
 
   getMoodBlendData(cameraZ) {
@@ -435,19 +441,17 @@ class Gallery {
   }
 
   updatePlaneMotion(scroll = null) {
+    // Smooth pointer toward target
     this.pointerCurrent.lerp(this.pointerTarget, this.parallaxSmoothing)
 
+    // Velocity → breath + drift
     const velocityMax = Math.max(scroll?.velocityMax || 1, 0.0001)
     const velocityNormalized = THREE.MathUtils.clamp(
       Math.abs(scroll?.velocity || 0) / velocityMax,
       0,
       1
     )
-    const signedVelocityNormalized = THREE.MathUtils.clamp(
-      (scroll?.velocity || 0) / velocityMax,
-      -1,
-      1
-    )
+    const scrollDrift = THREE.MathUtils.clamp((scroll?.velocity || 0) / velocityMax, -1, 1)
     this.targetBreathIntensity = this.breathEnabled
       ? THREE.MathUtils.clamp(velocityNormalized * this.breathGain, 0, 1)
       : 0
@@ -456,13 +460,14 @@ class Gallery {
       this.targetBreathIntensity,
       this.breathSmoothing
     )
-    this.gestureParallaxTarget = this.gestureParallaxEnabled ? signedVelocityNormalized : 0
-    this.gestureParallaxCurrent = THREE.MathUtils.lerp(
-      this.gestureParallaxCurrent,
-      this.gestureParallaxTarget,
+    this.driftTarget = this.gestureParallaxEnabled ? scrollDrift : 0
+    this.driftCurrent = THREE.MathUtils.lerp(
+      this.driftCurrent,
+      this.driftTarget,
       this.gestureParallaxSmoothing
     )
 
+    // Per-plane: position, rotation, scale
     const xSpreadFactor = this.getXSpreadFactor()
 
     this.planes.forEach((plane, index) => {
@@ -476,7 +481,7 @@ class Gallery {
 
       const parallaxOffsetX = this.pointerCurrent.x * this.parallaxAmountX * parallaxInfluence
       const parallaxOffsetY = this.pointerCurrent.y * this.parallaxAmountY * parallaxInfluence
-      const gestureOffsetY = this.gestureParallaxCurrent * this.gestureParallaxAmountY
+      const gestureOffsetY = this.driftCurrent * this.gestureParallaxAmountY
 
       plane.position.x = xPosition + parallaxOffsetX
       plane.position.y = yPosition + parallaxOffsetY + gestureOffsetY

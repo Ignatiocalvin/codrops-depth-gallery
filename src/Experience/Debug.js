@@ -33,16 +33,6 @@ class Debug {
     return folder
   }
 
-  addColorBinding({ folderTitle, targetObject, property, label, onChange }) {
-    return this.addBinding({
-      folderTitle,
-      targetObject,
-      property,
-      label,
-      onChange,
-    })
-  }
-
   addBinding({ folderTitle, targetObject, property, label, options = {}, onChange }) {
     const folder = this.getFolder(folderTitle)
     const binding = folder.addBinding(targetObject, property, {

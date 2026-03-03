@@ -13,10 +13,10 @@ class Background {
     this.material = null
     this.mesh = null
 
-    this.bgColor = new THREE.Color('#FBE8CD')
+    this.backgroundColor = new THREE.Color('#FBE8CD')
     this.blob1Color = new THREE.Color('#FFD56D')
     this.blob2Color = new THREE.Color('#5D816A')
-    this.nextBgColor = new THREE.Color()
+    this.nextBackgroundColor = new THREE.Color()
     this.nextBlob1Color = new THREE.Color()
     this.nextBlob2Color = new THREE.Color()
 
@@ -49,7 +49,7 @@ class Background {
       depthWrite: false,
       depthTest: false,
       uniforms: {
-        uBgColor: { value: this.bgColor },
+        uBackgroundColor: { value: this.backgroundColor },
         uBlob1Color: { value: this.blob1Color },
         uBlob2Color: { value: this.blob2Color },
         uNoiseStrength: { value: this.noiseStrength },
@@ -70,8 +70,8 @@ class Background {
     this.isInitialized = true
   }
 
-  setMoodColors({ bg, blob1, blob2 } = {}) {
-    if (bg) this.bgColor.set(bg)
+  setMoodColors({ background, blob1, blob2 } = {}) {
+    if (background) this.backgroundColor.set(background)
     if (blob1) this.blob1Color.set(blob1)
     if (blob2) this.blob2Color.set(blob2)
 
@@ -87,7 +87,9 @@ class Background {
       return
     }
 
-    this.bgColor.set(currentMood.bg).lerp(this.nextBgColor.set(nextMood.bg), safeBlend)
+    this.backgroundColor
+      .set(currentMood.background)
+      .lerp(this.nextBackgroundColor.set(nextMood.background), safeBlend)
     this.blob1Color.set(currentMood.blob1).lerp(this.nextBlob1Color.set(nextMood.blob1), safeBlend)
     this.blob2Color.set(currentMood.blob2).lerp(this.nextBlob2Color.set(nextMood.blob2), safeBlend)
 
@@ -97,7 +99,7 @@ class Background {
   updateUniformColors() {
     if (!this.material) return
 
-    this.material.uniforms.uBgColor.value.copy(this.bgColor)
+    this.material.uniforms.uBackgroundColor.value.copy(this.backgroundColor)
     this.material.uniforms.uBlob1Color.value.copy(this.blob1Color)
     this.material.uniforms.uBlob2Color.value.copy(this.blob2Color)
     this.material.uniforms.uNoiseStrength.value = this.noiseStrength
