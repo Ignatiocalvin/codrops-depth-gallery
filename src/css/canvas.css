@@ -168,7 +168,7 @@
 
 @media (max-width: 53em) {
   .plane-label-overlay {
-    inset: auto 0 max(4.25rem, env(safe-area-inset-bottom)) 0;
+    inset: auto 0 max(6.25rem, env(safe-area-inset-bottom)) 0;
     display: grid;
     grid-template-columns: auto auto;
     justify-content: space-between;
