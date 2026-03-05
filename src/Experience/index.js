@@ -3,26 +3,31 @@ import { Gallery } from '@/Experience/Gallery'
 import { Background } from '@/Experience/Background'
 import { Debug } from '@/Experience/Debug'
 import { Label } from '@/Experience/Label'
+import { TrailController } from '@/Experience/TrailController'
 
 class Experience {
   constructor() {
     this.isInitialized = false
+    this.isDisposed = false
     this.frameDarkPlaneCount = 2
     this.isFrameTextDark = null
     this.debug = new Debug()
     this.gallery = new Gallery(this.debug)
     this.label = new Label(this.gallery)
     this.background = new Background(this.debug)
+    this.trailController = new TrailController({
+      gallery: this.gallery,
+      debug: this.debug,
+    })
   }
 
   async init(scene, camera) {
     if (this.isInitialized) return
 
     await this.gallery.init(scene)
-
     this.label.init()
-
     this.background.init()
+    this.trailController.init(scene, camera)
 
     const initialPlaneBlendData = this.gallery.getPlaneBlendData(camera.position.z)
     this.updateFrameTextTone(initialPlaneBlendData)
@@ -44,6 +49,8 @@ class Experience {
   }
 
   update(time, camera = null, scroll = null) {
+    this.trailController.update(camera, scroll)
+
     // Gallery + label
     this.gallery.update(camera, scroll)
     this.label.update(camera)
@@ -60,7 +67,7 @@ class Experience {
         this.background.setMoodBlend(moodBlendData)
       }
 
-      // Depth + velocity → background motion response
+      // Depth + velocity -> background motion response
       const depthProgress = this.gallery.getDepthProgress(camera.position.z)
       const velocityMax = scroll?.velocityMax || 1
       const velocityIntensity = THREE.MathUtils.clamp(
@@ -81,6 +88,16 @@ class Experience {
 
     // Background tick
     this.background.update(time)
+  }
+
+  dispose() {
+    if (this.isDisposed) return
+
+    this.trailController.dispose()
+    this.gallery.dispose()
+    this.label.dispose()
+    this.background.dispose()
+    this.isDisposed = true
   }
 }
 

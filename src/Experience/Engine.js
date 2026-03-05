@@ -196,9 +196,7 @@ class Engine {
     this.preloadedTextures.clear()
     this.stats?.dom.remove()
     this.stats = null
-    this.experience.gallery.dispose()
-    this.experience.label.dispose()
-    this.experience.background.dispose()
+    this.experience.dispose?.()
   }
 }
 
