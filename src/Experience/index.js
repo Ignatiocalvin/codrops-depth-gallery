@@ -49,7 +49,7 @@ class Experience {
   }
 
   update(time, camera = null, scroll = null) {
-    this.trailController.update(camera, scroll)
+    this.trailController.update(camera, scroll, time)
 
     // Gallery + label
     this.gallery.update(camera, scroll)

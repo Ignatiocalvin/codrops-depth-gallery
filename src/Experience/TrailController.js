@@ -12,7 +12,7 @@ class TrailController {
     this.debug = debug
     this.hasBoundDebug = false
     this.trailHeadPosition = new THREE.Vector3() // Reused head position vector
-    this.clock = new THREE.Clock()
+    this.timer = new THREE.Timer()
 
     this.configuration = {
       isEnabled: true,
@@ -106,9 +106,14 @@ class TrailController {
     this.hasBoundDebug = false
   }
 
-  update(camera = null, scroll = null) {
+  update(camera = null, scroll = null, time = null) {
     if (!camera) return
-    const deltaSeconds = this.clock.getDelta()
+    if (Number.isFinite(time)) {
+      this.timer.update(time)
+    } else {
+      this.timer.update()
+    }
+    const deltaSeconds = this.timer.getDelta()
 
     this.trail.object.visible = this.configuration.isEnabled
     const shouldShowHeadParticles =
