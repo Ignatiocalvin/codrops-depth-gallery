@@ -14,7 +14,7 @@ Three recording formats are included:
 
 ## Screenshots
 
-Static captures of the experience across different gallery slides.
+Static captures of the experience.
 
 ## How to download
 
