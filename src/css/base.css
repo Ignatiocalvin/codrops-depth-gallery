@@ -135,7 +135,7 @@ a {
   grid-template-areas:
     'title title title title'
     'back archive github ...'
-    'demos demos demos demos'
+    'credit credit credit credit'
     'tags tags tags tags'
     'sponsor sponsor sponsor sponsor';
 
@@ -185,32 +185,14 @@ a {
   }
 
   .frame__credit {
-    position: fixed;
-    right: max(1rem, env(safe-area-inset-right));
-    bottom: calc(max(1rem, env(safe-area-inset-bottom)) + 1.5rem);
+    grid-area: credit;
     margin: 0;
     opacity: 0.78;
     font-size: 0.78rem;
     font-weight: 500;
     letter-spacing: var(--ui-tracking);
     line-height: 1.2;
-    pointer-events: auto;
-    z-index: 1200;
     text-align: right;
-  }
-
-  .frame__debug-hint {
-    position: fixed;
-    right: max(1rem, env(safe-area-inset-right));
-    bottom: max(1rem, env(safe-area-inset-bottom));
-    margin: 0;
-    opacity: 0.78;
-    font-size: 0.78rem;
-    font-weight: 500;
-    letter-spacing: var(--ui-tracking);
-    line-height: 1.2;
-    pointer-events: none;
-    z-index: 1200;
   }
 
   @media screen and (min-width: 53em) {
@@ -224,22 +206,18 @@ a {
     grid-template-rows: auto auto;
     align-content: space-between;
     grid-template-areas:
-      'title back github archive demos'
-      'tags tags tags sponsor sponsor';
+      'title back github archive sponsor'
+      'tags tags tags credit credit';
 
     .frame__tags {
       align-self: end;
     }
 
-    .frame__demos,
+    .frame__credit,
     #cdawrap {
       justify-self: end;
       text-align: right;
       max-width: 300px;
-    }
-
-    .frame__debug-hint {
-      text-align: right;
     }
   }
 }

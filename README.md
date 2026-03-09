@@ -4,13 +4,11 @@ A Three.js depth-scrolling image gallery where scroll velocity drives atmospheri
 
 ![Atmospheric Depth Gallery screenshot](/resources/screenshot.jpg)
 
-[Article on Codrops](https://tympanus.net/codrops/?p=)
+[Article on Codrops](https://tympanus.net/codrops/?p=111409)
 
-[Demo](https://tympanus.net/Tutorials/.../)
+[Demo](https://tympanus.net/Tutorials/DepthGallery/)
 
 ## Installation
-
-Run this demo on a [local server](https://developer.mozilla.org/en-US/docs/Learn/Common_questions/Tools_and_setup/set_up_a_local_testing_server):
 
 ```
 npm install
