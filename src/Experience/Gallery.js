@@ -111,15 +111,15 @@ class Gallery {
   getPlaneLabelData(planeDefinition, index) {
     const fallback = {
       word: `tone ${String(index + 1).padStart(2, '0')}`,
-      pms: 'N/A',
       color: '',
+      specs: [] // Add empty array as fallback
     }
     const label = planeDefinition.label || fallback
 
     return {
       word: label.word || fallback.word,
-      pms: label.pms || fallback.pms,
       color: label.color || fallback.color,
+      specs: label.specs || fallback.specs, // Pass the array through!
     }
   }
 

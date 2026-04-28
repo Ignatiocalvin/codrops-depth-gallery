@@ -139,21 +139,28 @@
 
 .plane-label-card__specs {
   margin: 0;
-  display: grid;
-  gap: 0.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
 }
 
 .plane-label-card__row {
   margin: 0;
   display: grid;
-  grid-template-columns: 3.5rem 1fr;
+  /* The first column is exactly 5.5rem wide (adjust if needed), the second column naturally follows */
+  grid-template-columns: 6rem auto; 
   align-items: baseline;
-  gap: 0.8rem;
+  justify-content: start; /* This prevents them from spreading across the whole screen */
+  gap: 0; /* We don't need a gap because the grid column width handles the spacing */
+  width: auto;
 }
 
 .plane-label-card__row dt,
 .plane-label-card__row dd {
   margin: 0;
+  white-space: nowrap;
+  text-align: left; /* This stops the values from being forced to the right */
 }
 
 .plane-label-card__row dt {
@@ -200,11 +207,6 @@
 
   .plane-label-card__word {
     font-size: 10px;
-  }
-
-  .plane-label-card__row {
-    grid-template-columns: 2.8rem 1fr;
-    gap: 0.6rem;
   }
 
   .plane-label-card__value {

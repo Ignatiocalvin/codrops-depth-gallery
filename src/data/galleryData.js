@@ -6,31 +6,41 @@ import FLOWER05 from '@/assets/flower-05.webp'
 
 const galleryPlaneData = [
   {
-    fallbackColor: '#feca4f',
-    accentColor: '#feca4f',
+    fallbackColor: '#b07d4a',
+    accentColor: '#d4a373',
     textureSrc: FLOWER01,
     position: { x: -0.9, y: 0 },
-    backgroundColor: '#fffaf0',
-    blob1Color: '#ffdf94',
-    blob2Color: '#fce7c4',
+    backgroundColor: '#fff9ed',
+    blob1Color: '#f3d5b5',
+    blob2Color: '#8b5e34',
     label: {
-      word: 'golden',
-      pms: 'PMS 135 C',
-      color: '#2e2e2e',
+      word: 'About',
+      color: '#3d2b1f',
+      specs: [
+        { label: 'Scientist', value: 'Machine Learning' },
+        { label: 'Engineer', value: 'Cloud & Data' },
+        { label: 'Analyst', value: 'Product Insights' },
+        { label: 'Developer', value: 'Backend & APIs' }
+      ]
     },
   },
   {
-    fallbackColor: '#80455a',
-    accentColor: '#80455a',
-    textureSrc: FLOWER02,
-    position: { x: 0.8, y: 0 },
-    backgroundColor: '#fffaf0',
-    blob1Color: '#d29a41',
-    blob2Color: '#bb96af',
+    fallbackColor: '#d39e1e',
+    accentColor: '#d39e1e',
+    textureSrc: FLOWER02, // Assuming this is your second image import
+    position: { x: 0.3, y: 0 },
+    backgroundColor: '#6a97b8',
+    blob1Color: '#fbd31c',
+    blob2Color: '#303b42',
     label: {
-      word: 'violet',
-      pms: 'PMS 4985 C',
-      color: '#2e2e2e',
+      word: 'Experience',
+      color: '#f4f4f4',
+      specs: [
+        { label: 'P&G', value: 'Data Engineer | Project Manager' },
+        { label: 'Merck', value: 'Data Scientist | Software Developer' },
+        { label: 'Deloitte', value: 'Data Engineer | Software Developer' },
+        { label: '9fwr', value: 'Analytics Engineer | Consultant' }
+      ]
     },
   },
   {
@@ -42,9 +52,14 @@ const galleryPlaneData = [
     blob1Color: '#f88b8d',
     blob2Color: '#cfbbdd',
     label: {
-      word: 'afterglow',
-      pms: 'PMS 170 C',
+      word: 'Education',
       color: '#f4f4f4',
+      specs: [
+        { label: 'M.Sc.', value: 'University of Mannheim' },
+        { label: 'Exchange', value: 'Seoul National University' },
+        { label: 'B.Sc.', value: 'Freie University Berlin' },
+        { label: 'Thesis', value: 'Explainable Computer Vision' }
+      ]
     },
   },
   {
@@ -56,23 +71,49 @@ const galleryPlaneData = [
     blob1Color: '#ffaa00',
     blob2Color: '#00e1ff',
     label: {
-      word: 'cobalt',
-      pms: 'PMS 660 C',
+      word: 'Creator, Founder',
       color: '#f4f4f4',
+      specs: [
+        { label: 'Content', value: '@indonesian.bercerita (21k followers)', url: 'https://instagram.com/indonesian.bercerita'},
+        { label: 'Co-Founder', value: 'Google Developers Student Club (400+ Members)' },
+        { label: 'Cinema', value: '@ignatiocalvin', url: 'https://instagram.com/ignatiocalvin' },
+        { label: 'Founder', value: 'klipin.ai (building)' }
+      ]
     },
   },
   {
-    fallbackColor: '#fdd895',
-    accentColor: '#fdd895',
-    textureSrc: FLOWER05,
+    fallbackColor: '#9e4a3b',
+    accentColor: '#9e4a3b',
+    textureSrc: FLOWER05, // Update this variable name to your new image
     position: { x: -0.7, y: 0 },
-    backgroundColor: '#7d936e',
-    blob1Color: '#fdd895',
-    blob2Color: '#a5b599',
+    backgroundColor: '#eed8c9', 
+    blob1Color: '#c76b58',
+    blob2Color: '#b9825b',
     label: {
-      word: 'meadow',
-      pms: 'PMS 7507 C',
-      color: '#f4f4f4',
+      word: 'Connect',
+      color: '#3a221c',
+      specs: [
+        { 
+          label: 'Email', 
+          value: 'ignacalvin@gmail.com', 
+          url: 'mailto:ignacalvin@gmail.com' 
+        },
+        { 
+          label: 'LinkedIn', 
+          value: 'in/ignatiocalvin', 
+          url: 'https://www.linkedin.com/in/ignatio-calvin-hidayat/' 
+        },
+        { 
+          label: 'GitHub', 
+          value: '@Ignatiocalvin', 
+          url: 'https://github.com/Ignatiocalvin' 
+        },
+        { 
+          label: 'Resume', 
+          value: 'Download', 
+          url: '/CV_Ignatio.docx' // See the note below about hosting this!
+        }
+      ]
     },
   },
 ]
